@@ -1,0 +1,228 @@
+.hero__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+  padding-top: clamp(16px, 3vw, 48px);
+  padding-bottom: clamp(40px, 5vw, 64px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 4vw, 48px);
+}
+
+.hero__heading {
+  text-align: center;
+}
+
+.hero__heading-line {
+  font-size: clamp(30px, 5.4vw, 78px);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+}
+
+.hero__heading-line--muted {
+  color: var(--color-gray);
+}
+
+.hero__subtext {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--gap-lg);
+  flex-wrap: wrap;
+}
+
+.hero__subtext-item {
+  max-width: 24em;
+  font-size: clamp(14px, 1vw, 16px);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-gray-text);
+}
+
+.hero__subtext-item--right {
+  margin-left: auto;
+  text-align: right;
+}
+
+.hero__cards {
+  display: flex;
+  gap: var(--gap-lg);
+  align-items: stretch;
+}
+
+.hero__card {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 0%;
+  flex-grow: 1;
+  min-width: 0;
+  height: clamp(280px, 22vw, 340px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(16px, 1.6vw, 24px);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  cursor: pointer;
+  transition: flex-grow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero__card--open {
+  flex-grow: 3;
+}
+
+.hero__card--photo {
+  background: var(--color-photo-bg);
+  color: var(--color-white);
+}
+
+.hero__card--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.6));
+  z-index: 0;
+}
+
+.hero__card-photo {
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero__card-top,
+.hero__card-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero__card-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero__card-tag--accent {
+  background: var(--color-green);
+  border-color: transparent;
+  color: var(--color-dark);
+}
+
+.hero__card-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--color-green-text);
+}
+
+.hero__card--photo .hero__card-icon {
+  color: var(--color-white);
+}
+
+.hero__card-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.hero__card-title {
+  font-size: clamp(15px, 1.4vw, 22px);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero__card-subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.hero__card:not(.hero__card--photo) .hero__card-subtitle {
+  color: var(--color-gray-text);
+}
+
+.hero__card,
+.hero__slide {
+  text-decoration: none;
+}
+
+/* mobile slider (arrows), hidden on desktop */
+.hero__slider-wrap {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .hero__cards--desktop {
+    display: none;
+  }
+
+  .hero__slider-wrap {
+    display: block;
+  }
+
+  .hero__slider {
+    display: flex;
+    gap: var(--gap-lg);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin: 0 calc(var(--page-margin) * -1);
+    padding-inline: var(--page-margin);
+  }
+
+  .hero__slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero__slide {
+    flex: 0 0 auto;
+    width: min(64vw, 280px);
+    height: clamp(280px, 60vw, 340px);
+    scroll-snap-align: start;
+  }
+
+  .hero__slider-controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .hero__slider-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--color-card);
+    color: var(--color-dark);
+    transition: background 0.2s ease;
+  }
+
+  .hero__slider-arrow:hover {
+    background: var(--color-green);
+  }
+
+  .hero__slider-arrow svg {
+    width: 18px;
+    height: 18px;
+  }
+}
