@@ -186,6 +186,20 @@ create policy "public read published news" on public.news_posts
 create policy "public read seo pages" on public.seo_pages
   for select using (true);
 
+-- RLS policies alone don't grant access — Postgres still requires the
+-- underlying table-level privilege for the role. Safe to re-run.
+grant usage on schema public to anon, authenticated;
+grant select on
+  public.games,
+  public.training_options,
+  public.training_packages,
+  public.gallery_categories,
+  public.gallery_photos,
+  public.news_categories,
+  public.news_posts,
+  public.seo_pages
+to anon, authenticated;
+
 -- No insert/update/delete policies anywhere on purpose: the anon/publishable
 -- key can never write. Only service_role — used exclusively by server code
 -- that has already checked the admin session — can, because it bypasses RLS.

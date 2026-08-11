@@ -5,11 +5,16 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticleGrid from "@/components/ArticleGrid";
 import { ArrowRight } from "@/components/Icons";
-import { getAllPosts, getCategories, getPost, getPublishedPosts } from "@/lib/repositories/news";
+import {
+  getCategories,
+  getPost,
+  getPublishedPosts,
+  getPublishedSlugs,
+} from "@/lib/repositories/news";
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+  const slugs = await getPublishedSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }) {
