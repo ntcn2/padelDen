@@ -188,7 +188,7 @@ create policy "public read seo pages" on public.seo_pages
 
 -- RLS policies alone don't grant access — Postgres still requires the
 -- underlying table-level privilege for the role. Safe to re-run.
-grant usage on schema public to anon, authenticated;
+grant usage on schema public to anon, authenticated, service_role;
 grant select on
   public.games,
   public.training_options,
@@ -199,6 +199,12 @@ grant select on
   public.news_posts,
   public.seo_pages
 to anon, authenticated;
+
+-- service_role bypasses RLS but still needs the base table grant — without
+-- this, server code using the service key gets "permission denied" even
+-- though RLS would otherwise let it through.
+grant all on all tables in schema public to service_role;
+alter default privileges in schema public grant all on tables to service_role;
 
 -- No insert/update/delete policies anywhere on purpose: the anon/publishable
 -- key can never write. Only service_role — used exclusively by server code
