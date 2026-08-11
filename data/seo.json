@@ -1,0 +1,16 @@
+[
+  {
+    "pageKey": "home",
+    "label": "Главная",
+    "path": "/",
+    "seoTitle": "Top Padel Alicante — падел-клуб в Аликанте",
+    "seoDescription": "Падел объединяет людей и превращает обычную игру в часть твоей жизни. Турниры, тренировки и игровые встречи в Аликанте."
+  },
+  {
+    "pageKey": "journal",
+    "label": "Padel Journal",
+    "path": "/news",
+    "seoTitle": "Padel Journal — все статьи | Top Padel Alicante",
+    "seoDescription": "Советы, разборы форматов турниров, снаряжение и истории сообщества Top Padel Alicante."
+  }
+]

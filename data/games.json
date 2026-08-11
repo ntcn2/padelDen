@@ -1,0 +1,53 @@
+[
+  {
+    "id": "g1",
+    "title": "Mexicano",
+    "date": "2026-08-12",
+    "dayOfWeek": "Среда",
+    "time": "19:30–21:30",
+    "location": "El Salt",
+    "participantsType": "players",
+    "participantsCount": 20,
+    "courtsCount": null,
+    "price": "15 €",
+    "extraText": "",
+    "registrationUrl": "#",
+    "photo": "https://picsum.photos/seed/padel-mexicano/900/700",
+    "published": true,
+    "order": 0
+  },
+  {
+    "id": "g2",
+    "title": "Americano Teams 1100-",
+    "date": "2026-08-15",
+    "dayOfWeek": "Суббота",
+    "time": "12:30–15:30",
+    "location": "Padel Indoor Alicante",
+    "participantsType": "pairs",
+    "participantsCount": 6,
+    "courtsCount": 3,
+    "price": "18 €",
+    "extraText": "",
+    "registrationUrl": "#",
+    "photo": "https://picsum.photos/seed/padel-americano-teams/900/700",
+    "published": true,
+    "order": 1
+  },
+  {
+    "id": "g3",
+    "title": "Americano 1100+",
+    "date": "2026-08-15",
+    "dayOfWeek": "Суббота",
+    "time": "15:30–18:30",
+    "location": "Padel Indoor Alicante",
+    "participantsType": null,
+    "participantsCount": null,
+    "courtsCount": null,
+    "price": "18 €",
+    "extraText": "",
+    "registrationUrl": "#",
+    "photo": "https://picsum.photos/seed/padel-americano-plus/900/700",
+    "published": true,
+    "order": 2
+  }
+]

@@ -1,0 +1,132 @@
+.gallery__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+  padding-block: var(--section-pad-y);
+}
+
+.gallery__filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-lg);
+  flex-wrap: wrap;
+  margin-bottom: clamp(24px, 2.6vw, 36px);
+}
+
+.gallery__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+.gallery__row {
+  display: flex;
+  gap: var(--gap-lg);
+}
+
+.gallery__item {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 0%;
+  flex-grow: 1;
+  min-width: 0;
+  height: clamp(220px, 18vw, 300px);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: flex-grow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gallery__item--open {
+  flex-grow: 2;
+}
+
+.gallery__item-photo {
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.gallery__item:hover .gallery__item-photo {
+  transform: scale(1.03);
+}
+
+.gallery__cta {
+  margin-top: clamp(24px, 2.6vw, 36px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.gallery__cta svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-green-text);
+}
+
+/* filtered / flat view: wrapping grid on desktop */
+.gallery__flat {
+  display: none;
+  gap: var(--gap-lg);
+}
+
+.gallery__flat:not(.gallery__flat--mobile-only) {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.gallery__flat-item {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 260px;
+  height: clamp(220px, 18vw, 300px);
+  border-radius: var(--radius-lg);
+}
+
+.gallery__flat-item .gallery__item-photo {
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .gallery__grid--desktop {
+    display: none;
+  }
+
+  .gallery__flat {
+    display: flex !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 8px;
+    margin: 0 calc(var(--page-margin) * -1);
+    padding-inline: var(--page-margin);
+    scrollbar-width: none;
+  }
+
+  .gallery__flat::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery__flat-item {
+    flex: 0 0 78%;
+    scroll-snap-align: center;
+    height: 62vw;
+    max-height: 380px;
+  }
+}
+
+@media (max-width: 900px) {
+  .gallery__row {
+    flex-wrap: wrap;
+  }
+  .gallery__item {
+    flex-basis: calc(50% - var(--gap-lg) / 2);
+  }
+  .gallery__item--open {
+    flex-basis: 100%;
+  }
+}

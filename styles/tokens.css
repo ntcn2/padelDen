@@ -1,0 +1,26 @@
+:root {
+  --color-bg: #f9f9f7;
+  --color-dark: #121212;
+  --color-gray: #9a9a9a;
+  --color-gray-text: #6e6e6e;
+  --color-card: #ececea;
+  --color-border: #dddbda;
+  --color-green: #c2e23c;
+  --color-green-text: #7a9720;
+  --color-white: #ffffff;
+  --color-photo-bg: #1c1c1c;
+  --color-photo-bg-2: #232323;
+  --color-photo-bg-3: #1e1e1e;
+
+  --font-sans: "Inter Tight", "Inter", system-ui, sans-serif;
+
+  /* fluid section padding: grows with viewport, clamps at desktop */
+  --page-margin: clamp(20px, 4vw, 30px);
+  --section-pad-y: clamp(56px, 8vw, 100px);
+  --gap-lg: clamp(14px, 1.4vw, 20px);
+  --gap-md: clamp(10px, 1vw, 16px);
+  --radius-lg: clamp(16px, 1.6vw, 24px);
+  --radius-pill: 999px;
+
+  --container-max: 1600px;
+}

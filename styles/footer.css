@@ -1,0 +1,152 @@
+.footer__inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--page-margin);
+  padding-top: clamp(32px, 4vw, 56px);
+}
+
+.footer__divider {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.footer__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 4vw, 48px);
+  justify-content: space-between;
+  padding-block: clamp(32px, 4vw, 48px);
+}
+
+.footer__logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer__logo-mark {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  width: 32px;
+  height: 32px;
+}
+
+.footer__logo-mark span {
+  border-radius: 50%;
+  background: var(--color-green);
+}
+
+.footer__logo-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 140px;
+}
+
+.footer__col-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-green-text);
+}
+
+.footer__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.footer__contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer__contact-row svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-green-text);
+  flex-shrink: 0;
+}
+
+.footer__col--desc {
+  max-width: 320px;
+  gap: 24px;
+}
+
+.footer__description {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-gray-text);
+}
+
+.footer__socials {
+  display: flex;
+  gap: 12px;
+}
+
+.footer__social {
+  width: 44px;
+  height: 44px;
+  border-color: var(--color-border);
+  color: var(--color-dark);
+}
+
+.footer__social svg {
+  width: 40%;
+  height: 40%;
+}
+
+.footer__legal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--gap-lg);
+  flex-wrap: wrap;
+  padding-block: clamp(20px, 2.4vw, 28px);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-gray-text);
+}
+
+.footer__legal-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer__legal-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-green);
+}
+
+.footer__watermark-wrap {
+  overflow: hidden;
+  height: clamp(50px, 8vw, 100px);
+}
+
+.footer__watermark {
+  display: block;
+  font-size: clamp(70px, 11vw, 150px);
+  font-weight: 800;
+  line-height: 1;
+  color: #eeeeea;
+  white-space: nowrap;
+}

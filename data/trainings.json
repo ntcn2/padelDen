@@ -1,0 +1,48 @@
+{
+  "options": [
+    {
+      "id": "t1",
+      "title": "Индивидуальная тренировка",
+      "price": "30 €",
+      "unit": "час",
+      "note": "+ стоимость корта",
+      "registrationUrl": "#",
+      "order": 0
+    },
+    {
+      "id": "t2",
+      "title": "Групповая тренировка",
+      "price": "40 €",
+      "unit": "тренировка",
+      "note": "+ стоимость корта",
+      "registrationUrl": "#",
+      "order": 1
+    }
+  ],
+  "packages": [
+    {
+      "id": "p1",
+      "title": "Пакет индивидуальных тренировок",
+      "tiers": [
+        { "sessionsCount": 4, "oldPrice": "120 €", "price": "100 €" },
+        { "sessionsCount": 8, "oldPrice": "240 €", "price": "180 €" }
+      ],
+      "validityNote": "Тренировки необходимо использовать в течение 30 дней.",
+      "extraNote": "+ стоимость корта",
+      "registrationUrl": "#",
+      "order": 0
+    },
+    {
+      "id": "p2",
+      "title": "Пакет групповых тренировок",
+      "tiers": [
+        { "sessionsCount": 4, "oldPrice": "160 €", "price": "140 €" },
+        { "sessionsCount": 8, "oldPrice": "320 €", "price": "260 €" }
+      ],
+      "validityNote": "Тренировки необходимо использовать в течение 30 дней.",
+      "extraNote": "+ стоимость корта",
+      "registrationUrl": "#",
+      "order": 1
+    }
+  ]
+}
