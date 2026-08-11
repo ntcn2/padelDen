@@ -12,7 +12,7 @@ export async function proxy(request) {
     return supabaseResponse;
   }
 
-  if (!user) {
+  if (!user || user.email !== process.env.ADMIN_EMAIL) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
