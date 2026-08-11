@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 /**
  * Generic drag-and-drop reorderable list (native HTML5 DnD, no dependencies).
@@ -8,11 +8,15 @@ import { useEffect, useState } from "react";
  */
 export default function ReorderableList({ items, getId, renderRow, onReorder }) {
   const [list, setList] = useState(items);
+  const [prevItems, setPrevItems] = useState(items);
   const [dragId, setDragId] = useState(null);
 
-  useEffect(() => {
+  // Reset local order when the parent passes a new items array, without an
+  // effect (https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes).
+  if (items !== prevItems) {
+    setPrevItems(items);
     setList(items);
-  }, [items]);
+  }
 
   function handleDrop(targetId) {
     if (dragId === null || dragId === targetId) return;

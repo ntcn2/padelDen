@@ -35,7 +35,7 @@ export default async function ArticlePage({ params }) {
     getPublishedPosts(),
   ]);
 
-  if (!post || !post.published) notFound();
+  if (!post) notFound();
 
   const categoryName =
     categories.find((c) => c.id === post.categoryId)?.name || "";

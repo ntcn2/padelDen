@@ -1,16 +1,17 @@
--- Top Padel Alicante — Supabase schema, RLS policies, Storage bucket
--- Run this once in Supabase Dashboard → SQL Editor. Safe to re-run: uses
--- IF NOT EXISTS / OR REPLACE where possible, but on a fresh project just
--- run it top to bottom.
+-- Top Padel Alicante — Supabase schema, RLS policies, Storage bucket,
+-- admin sessions. Run this once in Supabase Dashboard → SQL Editor. Safe to
+-- re-run top to bottom on a fresh project or an already-migrated one.
 --
 -- Auth model: NOT Supabase Auth. The admin panel checks a single
 -- ADMIN_PASSWORD (app env var) and issues its own random session token,
--- stored (hashed) in admin_sessions below. Every mutation runs through the
--- service_role key from trusted server code, after that check passes — so
--- RLS here only needs to handle PUBLIC READ. There are no write policies
--- for the anon/authenticated roles at all: nobody can write via the API
--- with the publishable key, on purpose. service_role bypasses RLS
--- entirely, which is what makes writes possible.
+-- stored (hashed) in admin_sessions below. Every admin read of unpublished
+-- content and every mutation runs through requireAdmin() first (which
+-- verifies that token against this table) and then through the
+-- service_role key from trusted server code — so RLS here only needs to
+-- handle PUBLIC READ. There are no write policies for the anon/authenticated
+-- roles at all: nobody can write via the API with the publishable key, on
+-- purpose. service_role bypasses RLS entirely, which is what makes admin
+-- writes (and unpublished reads) possible.
 
 create extension if not exists pgcrypto; -- for gen_random_uuid()
 
@@ -162,56 +163,45 @@ alter table public.news_categories enable row level security;
 alter table public.news_posts enable row level security;
 alter table public.seo_pages enable row level security;
 
+-- CREATE POLICY has no IF NOT EXISTS, so drop-then-create is what makes
+-- this block safe to re-run.
+drop policy if exists "public read published games" on public.games;
 create policy "public read published games" on public.games
   for select using (published);
 
+drop policy if exists "public read training options" on public.training_options;
 create policy "public read training options" on public.training_options
   for select using (true);
 
+drop policy if exists "public read training packages" on public.training_packages;
 create policy "public read training packages" on public.training_packages
   for select using (true);
 
+drop policy if exists "public read gallery categories" on public.gallery_categories;
 create policy "public read gallery categories" on public.gallery_categories
   for select using (true);
 
+drop policy if exists "public read gallery photos" on public.gallery_photos;
 create policy "public read gallery photos" on public.gallery_photos
   for select using (true);
 
+drop policy if exists "public read news categories" on public.news_categories;
 create policy "public read news categories" on public.news_categories
   for select using (true);
 
+drop policy if exists "public read published news" on public.news_posts;
 create policy "public read published news" on public.news_posts
   for select using (published);
 
+drop policy if exists "public read seo pages" on public.seo_pages;
 create policy "public read seo pages" on public.seo_pages
   for select using (true);
 
--- RLS policies alone don't grant access — Postgres still requires the
--- underlying table-level privilege for the role. Safe to re-run.
-grant usage on schema public to anon, authenticated, service_role;
-grant select on
-  public.games,
-  public.training_options,
-  public.training_packages,
-  public.gallery_categories,
-  public.gallery_photos,
-  public.news_categories,
-  public.news_posts,
-  public.seo_pages
-to anon, authenticated;
-
--- service_role bypasses RLS but still needs the base table grant — without
--- this, server code using the service key gets "permission denied" even
--- though RLS would otherwise let it through.
-grant all on all tables in schema public to service_role;
-alter default privileges in schema public grant all on tables to service_role;
-
 -- No insert/update/delete policies anywhere on purpose: the anon/publishable
 -- key can never write. Only service_role — used exclusively by server code
--- that has already checked the admin session — can, because it bypasses RLS.
--- The admin panel itself reads unpublished rows too, but it does so through
--- the same service_role client (after the session check), not via a public
--- policy.
+-- that has already called requireAdmin() — can, because it bypasses RLS.
+-- The admin panel's own reads of unpublished rows go through the same
+-- service_role client, gated the same way, not via a public policy.
 
 -- =========================================================================
 -- 4. STORAGE — single public "media" bucket, read-only via the API
@@ -221,24 +211,17 @@ insert into storage.buckets (id, name, public)
 values ('media', 'media', true)
 on conflict (id) do nothing;
 
+drop policy if exists "public read media" on storage.objects;
 create policy "public read media" on storage.objects
   for select using (bucket_id = 'media');
 
 -- No write policies here either — uploads/deletes only happen via
--- service_role from Server Actions, after the admin session check.
+-- service_role from Server Actions, after requireAdmin().
 
 -- =========================================================================
--- 5. GRANTS — belt-and-braces table-level privileges
+-- 5. GRANTS — table-level privileges (RLS alone isn't enough; Postgres
+-- still requires the underlying GRANT for the role). Safe to re-run.
 -- =========================================================================
--- Supabase normally wires these up automatically when tables are created,
--- but on some projects/timings that autoconfiguration doesn't reach every
--- table (symptom: PostgREST returns "permission denied for table X" even
--- though RLS policies look right). These GRANTs are safe to (re-)run any
--- time — they don't weaken security: RLS above is still what decides which
--- *rows* anon/authenticated can see, and there are no write policies for
--- them at all, so they still can't insert/update/delete anything. This just
--- guarantees service_role (used only by trusted server code, after the
--- admin session check) can always reach every table.
 
 grant usage on schema public to anon, authenticated, service_role;
 

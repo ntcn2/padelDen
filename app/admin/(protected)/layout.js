@@ -1,6 +1,8 @@
 import AdminSidebar from "@/components/admin/AdminSidebar";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 
-export default function ProtectedAdminLayout({ children }) {
+export default async function ProtectedAdminLayout({ children }) {
+  await requireAdmin();
   return (
     <div className="admin-shell">
       <AdminSidebar />

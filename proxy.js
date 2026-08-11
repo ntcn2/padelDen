@@ -1,24 +1,21 @@
 import { NextResponse } from "next/server";
-import { updateSession } from "@/lib/supabase/middleware";
+import { ADMIN_SESSION_COOKIE, isSessionTokenValid } from "@/lib/admin/session";
 
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
-  // Always refresh the Supabase session cookie so it doesn't expire
-  // mid-visit, even on routes that don't require auth.
-  const { supabaseResponse, user } = await updateSession(request);
-
   if (!pathname.startsWith("/admin") || pathname === "/admin/login") {
-    return supabaseResponse;
+    return NextResponse.next();
   }
 
-  if (!user || user.email !== process.env.ADMIN_EMAIL) {
+  const token = request.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+  if (!(await isSessionTokenValid(token))) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  return supabaseResponse;
+  return NextResponse.next();
 }
 
 export const config = {
