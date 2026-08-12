@@ -37,6 +37,7 @@ export default function GameForm({ game }) {
   const [photoPreview, setPhotoPreview] = useState(game?.photo || "");
   const [photoRemoved, setPhotoRemoved] = useState(false);
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   function set(key, value) {
@@ -59,6 +60,7 @@ export default function GameForm({ game }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError("");
     setPending(true);
 
     const formData = new FormData();
@@ -78,10 +80,16 @@ export default function GameForm({ game }) {
     if (photoFile) formData.set("photo", photoFile);
     if (photoRemoved) formData.set("photoRemove", "1");
 
-    if (game) {
-      await updateGame(game.id, formData);
-    } else {
-      await createGame(formData);
+    try {
+      if (game) {
+        await updateGame(game.id, formData);
+      } else {
+        await createGame(formData);
+      }
+    } catch (err) {
+      setError(`Не удалось сохранить игру: ${err.message || err}`);
+      setPending(false);
+      return;
     }
     setPending(false);
     router.push("/admin/games");
@@ -265,6 +273,8 @@ export default function GameForm({ game }) {
         />
         Опубликовано на сайте
       </label>
+
+      {error && <p className="admin-error">{error}</p>}
 
       <div className="admin-form__actions">
         <button type="submit" className="admin-btn admin-btn--primary" disabled={pending}>

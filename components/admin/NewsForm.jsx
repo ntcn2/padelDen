@@ -36,6 +36,7 @@ export default function NewsForm({ post, categories }) {
   const [coverPreview, setCoverPreview] = useState(post?.coverImage || "");
   const [coverRemoved, setCoverRemoved] = useState(false);
   const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   function set(key, value) {
@@ -72,6 +73,7 @@ export default function NewsForm({ post, categories }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setError("");
     setPending(true);
 
     const formData = new FormData();
@@ -89,10 +91,16 @@ export default function NewsForm({ post, categories }) {
     newExtraFiles.forEach((file) => formData.append("extraImages", file));
     formData.set("keepExtraImagePaths", JSON.stringify(existingExtra.map((img) => img.path)));
 
-    if (post) {
-      await updatePost(post.id, formData);
-    } else {
-      await createPost(formData);
+    try {
+      if (post) {
+        await updatePost(post.id, formData);
+      } else {
+        await createPost(formData);
+      }
+    } catch (err) {
+      setError(`Не удалось сохранить новость: ${err.message || err}`);
+      setPending(false);
+      return;
     }
     setPending(false);
     router.push("/admin/journal");
@@ -271,6 +279,8 @@ export default function NewsForm({ post, categories }) {
           onChange={(e) => set("seoDescription", e.target.value)}
         />
       </div>
+
+      {error && <p className="admin-error">{error}</p>}
 
       <div className="admin-form__actions">
         <button type="submit" className="admin-btn admin-btn--primary" disabled={pending}>
