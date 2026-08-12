@@ -5,18 +5,21 @@ import Reveal from "./Reveal";
 const BUBBLES = [
   {
     seed: "community-avatar-1",
+    avatar: "/images/community__bubble-avatar-1.png",
     text: "Ищу +1 сегодня на 19:00",
     time: "18:42",
     style: { left: "52%", top: "14%" },
   },
   {
     seed: "community-avatar-2",
+    avatar: "/images/community__bubble-avatar-2.png",
     text: "Кто сыграет завтра утром?",
     time: "09:12",
     style: { left: "6%", top: "50%" },
   },
   {
     seed: "community-avatar-3",
+    avatar: "/images/community__bubble-avatar.png",
     text: "Нужна пара на Americano",
     time: "20:15",
     style: { left: "46%", top: "77%" },
@@ -69,7 +72,7 @@ export default function Community() {
 
           <div className="community__photo">
             <Image
-              src="https://picsum.photos/seed/community-photo/1200/900"
+              src="/images/community-photo.png"
               alt=""
               fill
               sizes="900px"
@@ -78,12 +81,7 @@ export default function Community() {
             {BUBBLES.map((b) => (
               <div key={b.seed} className="community__bubble" style={b.style}>
                 <span className="community__bubble-avatar">
-                  <Image
-                    src={`https://picsum.photos/seed/${b.seed}/80/80`}
-                    alt=""
-                    fill
-                    sizes="36px"
-                  />
+                  <Image src={b.avatar} alt="" fill sizes="36px" />
                 </span>
                 <span className="community__bubble-text">{b.text}</span>
                 <span className="community__bubble-time">{b.time}</span>

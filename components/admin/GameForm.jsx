@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createGame, deleteGame, updateGame } from "@/lib/repositories/games";
+import { TrashIcon } from "@/components/Icons";
 
 const DEFAULTS = {
   title: "",
@@ -17,7 +18,6 @@ const DEFAULTS = {
   price: "",
   extraText: "",
   registrationUrl: "#",
-  photo: "",
   published: true,
 };
 
@@ -33,6 +33,9 @@ export default function GameForm({ game }) {
         }
       : DEFAULTS
   );
+  const [photoFile, setPhotoFile] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(game?.photo || "");
+  const [photoRemoved, setPhotoRemoved] = useState(false);
   const [pending, setPending] = useState(false);
   const router = useRouter();
 
@@ -40,13 +43,45 @@ export default function GameForm({ game }) {
     setValues((v) => ({ ...v, [key]: value }));
   }
 
+  function handlePhotoChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoFile(file);
+    setPhotoRemoved(false);
+    setPhotoPreview(URL.createObjectURL(file));
+  }
+
+  function removePhoto() {
+    setPhotoFile(null);
+    setPhotoPreview("");
+    setPhotoRemoved(true);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setPending(true);
+
+    const formData = new FormData();
+    formData.set("title", values.title);
+    formData.set("date", values.date);
+    formData.set("dayOfWeek", values.dayOfWeek);
+    formData.set("startTime", values.startTime);
+    formData.set("endTime", values.endTime);
+    formData.set("location", values.location);
+    formData.set("participantsType", values.participantsType);
+    formData.set("participantsCount", values.participantsCount);
+    formData.set("courtsCount", values.courtsCount);
+    formData.set("price", values.price);
+    formData.set("extraText", values.extraText);
+    formData.set("registrationUrl", values.registrationUrl);
+    if (values.published) formData.set("published", "on");
+    if (photoFile) formData.set("photo", photoFile);
+    if (photoRemoved) formData.set("photoRemove", "1");
+
     if (game) {
-      await updateGame(game.id, values);
+      await updateGame(game.id, formData);
     } else {
-      await createGame(values);
+      await createGame(formData);
     }
     setPending(false);
     router.push("/admin/games");
@@ -200,21 +235,26 @@ export default function GameForm({ game }) {
       </div>
 
       <div className="admin-field">
-        <label>Фото (ссылка на изображение)</label>
-        <input
-          className="admin-input"
-          value={values.photo}
-          onChange={(e) => set("photo", e.target.value)}
-          placeholder="https://..."
-        />
-        {values.photo && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={values.photo}
-            alt=""
-            style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 10, marginTop: 6 }}
-          />
+        <label>Фото</label>
+        {photoPreview && (
+          <div style={{ position: "relative", width: 96 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photoPreview}
+              alt=""
+              style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 10, marginTop: 6 }}
+            />
+            <button
+              type="button"
+              onClick={removePhoto}
+              className="admin-photo__btn"
+              style={{ position: "absolute", top: 4, right: 4 }}
+            >
+              <TrashIcon width={12} height={12} />
+            </button>
+          </div>
         )}
+        <input type="file" accept="image/*" onChange={handlePhotoChange} />
       </div>
 
       <label className="admin-checkbox">

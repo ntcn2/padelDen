@@ -16,6 +16,14 @@ import {
 import { CloseIcon, PlusIcon, TrashIcon } from "@/components/Icons";
 
 const ALL = "__all__";
+const IMAGE_EXTENSIONS = /\.(jpe?g|png|gif|webp|avif|bmp|svg)$/i;
+
+// Some browsers/OSes leave File.type empty for formats they don't
+// recognize (webp being the common case), so the MIME check alone
+// silently drops valid photos — fall back to the file extension.
+function isImageFile(file) {
+  return file.type.startsWith("image/") || IMAGE_EXTENSIONS.test(file.name);
+}
 
 export default function GalleryAdmin({ categories, photos }) {
   const [active, setActive] = useState(categories[0]?.id || ALL);
@@ -67,12 +75,20 @@ export default function GalleryAdmin({ categories, photos }) {
       alert("Выберите конкретный таб, чтобы загрузить фото в него.");
       return;
     }
-    const files = Array.from(fileList).filter((f) => f.type.startsWith("image/"));
-    if (files.length === 0) return;
+    const files = Array.from(fileList).filter(isImageFile);
+    if (files.length === 0) {
+      alert("Не удалось распознать выбранные файлы как изображения.");
+      return;
+    }
     const formData = new FormData();
     formData.set("categoryId", active);
     files.forEach((file) => formData.append("files", file));
-    await addPhotos(formData);
+    try {
+      await addPhotos(formData);
+    } catch (err) {
+      alert(`Не удалось загрузить фото: ${err.message || err}`);
+      return;
+    }
     router.refresh();
   }
 

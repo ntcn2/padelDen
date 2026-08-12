@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { CloseIcon, MenuIcon, SendIcon } from "./Icons";
 import { NAV_LINKS } from "./navLinks";
 
@@ -19,7 +20,7 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header__inner">
-        <a className="header__logo" href="#top">
+        <Link className="header__logo" href="/">
           <span className="header__logo-mark" aria-hidden="true">
             <span />
             <span />
@@ -30,7 +31,7 @@ export default function Header() {
             <span className="header__logo-line">TOP PADEL</span>
             <span className="header__logo-line">ALICANTE</span>
           </span>
-        </a>
+        </Link>
 
         <nav className="header__nav" aria-label="Основная навигация">
           {NAV_LINKS.map((link) => (

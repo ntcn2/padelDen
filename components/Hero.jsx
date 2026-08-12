@@ -9,6 +9,13 @@ import Reveal from "./Reveal";
 
 const DEFAULT_OPEN = 2;
 
+const TOURNAMENTS_PHOTO = "/images/hero-tournaments.webp";
+const TRAINING_PHOTO = "/images/hero-training.png";
+const NEXT_GAME_PHOTO = "/images/hero-next-game.png";
+const FIND_PARTNER_PHOTO = "/images/_D2A9966.webp";
+const NEWS_PHOTO = "/images/_D2A0257.webp";
+const GALLERY_PHOTO = "/images/_D2A0309.webp";
+
 function CardContent({ card }) {
   return (
     <>
@@ -46,7 +53,7 @@ export default function Hero({ nextGame }) {
         tag: "Ближайшая игра",
         title: nextGame.title,
         subtitle: [nextGame.dayOfWeek, nextGame.time].filter(Boolean).join(" · "),
-        photo: nextGame.photo,
+        photo: NEXT_GAME_PHOTO,
         accent: true,
         href: "#schedule",
       }
@@ -54,17 +61,24 @@ export default function Hero({ nextGame }) {
         tag: "Ближайшая игра",
         title: "Новая игра скоро",
         subtitle: "Следите за обновлениями",
+        photo: NEXT_GAME_PHOTO,
         accent: true,
         href: "#schedule",
       };
 
   const CARDS = [
-    { tag: "Турниры", title: "Турниры", href: "#schedule" },
-    { tag: "Тренировки", title: "Тренировки", href: "#pricing" },
+    { tag: "Турниры", title: "Турниры", photo: TOURNAMENTS_PHOTO, accent: true, href: "#schedule" },
+    { tag: "Тренировки", title: "Тренировки", photo: TRAINING_PHOTO, accent: true, href: "#pricing" },
     nextGameCard,
-    { tag: "Найти партнёра", title: "Найти партнёра", href: "#community" },
-    { tag: "Новости", title: "Новости", href: "/news" },
-    { tag: "Галерея", title: "Галерея", href: "#gallery" },
+    {
+      tag: "Найти партнёра",
+      title: "Найти партнёра",
+      photo: FIND_PARTNER_PHOTO,
+      accent: true,
+      href: "#community",
+    },
+    { tag: "Новости", title: "Новости", photo: NEWS_PHOTO, accent: true, href: "/news" },
+    { tag: "Галерея", title: "Галерея", photo: GALLERY_PHOTO, accent: true, href: "#gallery" },
   ];
 
   const { openIndex, groupProps, itemProps } = useAccordion(DEFAULT_OPEN);

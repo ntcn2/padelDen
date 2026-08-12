@@ -15,6 +15,18 @@ function pluralizeSessions(count) {
   return "тренировок";
 }
 
+const CONTACT_URL = "https://t.me/denystia";
+
+function formatPriceParts(value, unit) {
+  const formatted = formatPrice(value);
+  const euroIndex = formatted.lastIndexOf("€");
+  if (euroIndex === -1) return { amount: formatted, currency: "" };
+  return {
+    amount: formatted.slice(0, euroIndex).trimEnd(),
+    currency: formatted.slice(euroIndex),
+  };
+}
+
 export default async function Pricing() {
   const [options, packages] = await Promise.all([
     getTrainingOptions(),
@@ -24,20 +36,23 @@ export default async function Pricing() {
   return (
     <section className="pricing" id="pricing">
       <div className="pricing__inner">
-        <div className="section-header">
+        <div className="pricing__header">
           <Reveal>
             <p className="eyebrow">Тренировки</p>
-            <h2 className="section-title">
-              Играй лучше.
-              <br />
-              Получай больше
-              <br />
-              <span className="section-title--accent">удовольствия.</span>
+            <h2 className="pricing__title">
+              <span className="pricing__title-line">Играй лучше.</span>
+              <span className="pricing__title-line">Получай больше</span>
+              <span className="pricing__title-line pricing__title-line--muted">
+                удовольствие
+              </span>
             </h2>
           </Reveal>
-          <Reveal as="p" className="section-subtitle section-subtitle--ruled" delay={140}>
-            Подбираем тренировки под твой уровень
-            <br />и цели. Индивидуально или в группе.
+          <Reveal as="div" className="pricing__subtitle-wrap" delay={140}>
+            <span className="pricing__subtitle-divider" aria-hidden="true" />
+            <p className="pricing__subtitle-text">
+              Подбираем тренировки под твой уровень
+              <br />и цели. Индивидуально или в группе.
+            </p>
           </Reveal>
         </div>
 
@@ -45,6 +60,7 @@ export default async function Pricing() {
           {options.map((option, i) => {
             const Icon = OPTION_ICONS[i % OPTION_ICONS.length];
             const pkg = packages[i];
+            const { amount, currency } = formatPriceParts(option.price);
             return (
               <Reveal
                 as="article"
@@ -72,7 +88,7 @@ export default async function Pricing() {
                 <div className="pricing-card__body">
                   <div className="pricing-card__price">
                     <span className="pricing-card__price-amount">
-                      {formatPrice(option.price)}
+                      {amount} <span className="pricing-card__price-currency">{currency}</span>
                     </span>
                     <span className="pricing-card__price-unit">/ {option.unit}</span>
                   </div>
@@ -88,13 +104,6 @@ export default async function Pricing() {
                             {tier.oldPrice && <s>{formatPrice(tier.oldPrice)}</s>}
                             {formatPrice(tier.price)}
                           </span>
-                          <a
-                            className="icon-circle pricing-card__tier-cta"
-                            href={pkg.registrationUrl || "#"}
-                            aria-label="Записаться"
-                          >
-                            <ArrowRight />
-                          </a>
                         </div>
                       ))}
                     </div>
@@ -104,10 +113,10 @@ export default async function Pricing() {
                 {option.note && <p className="pricing-card__note">{option.note}</p>}
 
                 <a className="pricing-card__cta" href={option.registrationUrl || "#"}>
-                  Записаться на тренировку
-                  <span className="icon-circle icon-circle--sm">
+                  <span className="icon-circle pricing-card__cta-icon">
                     <ArrowRight />
                   </span>
+                  Записаться
                 </a>
               </Reveal>
             );
@@ -131,11 +140,16 @@ export default async function Pricing() {
               </p>
             </div>
           </div>
-          <a className="pricing__banner-button" href="#">
-            Связаться с нами
-            <span className="icon-circle icon-circle--sm icon-circle--filled">
+          <a
+            className="pricing__banner-button"
+            href={CONTACT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="icon-circle icon-circle--filled pricing__banner-button-icon">
               <ArrowRight />
             </span>
+            Связаться с нами
           </a>
         </Reveal>
       </div>

@@ -4,7 +4,7 @@ import {
   SendIcon,
   WhatsappIcon,
 } from "./Icons";
-import { NAV_LINKS } from "./navLinks";
+import { FOOTER_NAV_LINKS } from "./navLinks";
 
 const TELEGRAM_URL = "https://t.me/+Hsd53uTBjWc4N2Rk";
 
@@ -38,7 +38,7 @@ export default function Footer() {
           <div className="footer__col">
             <p className="footer__col-title">Навигация</p>
             <ul className="footer__list">
-              {NAV_LINKS.map((link) => (
+              {FOOTER_NAV_LINKS.map((link) => (
                 <li key={link.label}>
                   <a href={link.href}>{link.label}</a>
                 </li>

@@ -141,7 +141,7 @@
 }
 
 .hero__card-title {
-  font-size: clamp(15px, 1.4vw, 22px);
+  font-size: clamp(14px, 1.1vw, 18px);
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;

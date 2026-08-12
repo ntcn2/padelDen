@@ -87,10 +87,6 @@ export default function Gallery({ categories, photos }) {
               </button>
             ))}
           </div>
-          <a className="link-arrow" href="#">
-            Все фото и видео
-            <ArrowUpRight />
-          </a>
         </div>
 
         {photos.length === 0 ? (
