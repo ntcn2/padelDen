@@ -38,9 +38,15 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
+  /* above the photo (z-index 0), below the text (z-index 2) */
+  z-index: 1;
   opacity: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.65));
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.55) 40%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
   transition: opacity 0.4s ease;
 }
 
@@ -63,7 +69,7 @@
 .schedule__card-body,
 .schedule__card-footer {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .schedule__card-tag {
