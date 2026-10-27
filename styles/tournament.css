@@ -1258,3 +1258,264 @@ input.tb-score:disabled {
 .tb-editor-card {
   margin-bottom: 24px;
 }
+
+/* ---------- тёмная тема сеток, таблицы и ввода пар ----------
+   Переопределяем токены внутри панелей: всё, что выше написано через
+   var(--color-*), само становится тёмным. Ниже — точечные акценты лаймом. */
+
+.tb-panel {
+  --color-white: #1f1f1f;
+  --color-bg: #2a2a2a;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-dark: #ffffff;
+  --color-gray-text: rgba(255, 255, 255, 0.6);
+  --color-gray: rgba(255, 255, 255, 0.35);
+  --color-green-text: var(--color-green);
+
+  background: var(--color-photo-bg);
+  color: #ffffff;
+  color-scheme: dark;
+}
+
+.tb-panel textarea,
+.tb-panel input {
+  color: inherit;
+}
+
+.tb-panel .tb-slot::before,
+.tb-panel .tb-slot::after,
+.tb-panel .tb-pair::after {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.tb-panel .tb-nav button {
+  color: #ffffff;
+}
+
+.tb-panel .tb-nav button:hover {
+  color: #121212;
+}
+
+/* раунды: название на лаймовой плашке, время крупно */
+.tb-panel .tb-round__title {
+  padding: 9px 18px;
+  background: var(--color-green);
+  font-size: 13px;
+  font-weight: 700;
+  color: #121212;
+}
+
+.tb-panel .tb-round__time {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tb-panel .tb-round__time b {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.tb-panel .tb-chip--sm {
+  padding: 6px 10px 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tb-panel .tb-chip--sm input {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* матчи */
+.tb-panel .tb-match {
+  box-shadow: 0 12px 30px -18px rgba(0, 0, 0, 0.9);
+}
+
+.tb-panel .tb-match--pending {
+  background: transparent;
+  box-shadow: none;
+}
+
+.tb-panel .tb-ava {
+  background: #3a3a3a;
+  color: #ffffff;
+}
+
+.tb-panel .tb-ava i {
+  border-color: #1f1f1f;
+  color: #121212;
+}
+
+.tb-panel .tb-ava--unknown {
+  background: none;
+  color: var(--color-gray);
+}
+
+.tb-panel .tb-row--win {
+  background: rgba(194, 226, 60, 0.14);
+}
+
+.tb-panel .tb-row--win .tb-ava {
+  background: var(--color-green);
+  color: #121212;
+}
+
+.tb-panel .tb-row--win .tb-score {
+  background: var(--color-green);
+  color: #121212;
+}
+
+.tb-panel .tb-pick--on {
+  background: var(--color-green);
+  color: #121212;
+}
+
+.tb-panel .tb-score--bad,
+.tb-panel .tb-row--win .tb-score--bad {
+  border-color: #f0b44c;
+  background: rgba(240, 180, 76, 0.18);
+  color: #ffffff;
+}
+
+.tb-panel .tb-match__note {
+  border-top-color: rgba(240, 180, 76, 0.35);
+  background: rgba(240, 180, 76, 0.12);
+  color: #f6c66a;
+}
+
+/* корт — сразу бросается в глаза */
+.tb-panel .tb-match__meta .tb-chip--xs {
+  padding: 4px 4px 4px 14px;
+  border: 1px solid rgba(194, 226, 60, 0.45);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-green);
+}
+
+.tb-panel .tb-match__meta .tb-chip--xs b,
+.tb-panel .tb-court {
+  min-width: 40px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-green) !important;
+  font-size: 16px !important;
+  font-weight: 800;
+  line-height: 28px;
+  letter-spacing: 0;
+  text-align: center;
+  color: #121212;
+}
+
+.tb-panel .tb-court {
+  width: 52px;
+}
+
+.tb-panel .tb-court::placeholder {
+  color: rgba(18, 18, 18, 0.45);
+}
+
+/* чемпион */
+.tb-panel .tb-champ {
+  background: transparent;
+}
+
+.tb-panel .tb-champ--done {
+  background: var(--color-green);
+  color: #121212;
+  box-shadow: 0 20px 50px -25px var(--color-green);
+}
+
+.tb-panel .tb-champ--done .tb-ava {
+  background: #121212;
+  color: #ffffff;
+}
+
+.tb-panel .tb-champ--done .tb-ava i {
+  border-color: var(--color-green);
+}
+
+.tb-panel .tb-champ__title {
+  color: var(--color-gray-text);
+}
+
+.tb-panel .tb-champ--done .tb-champ__title {
+  color: rgba(18, 18, 18, 0.7);
+}
+
+/* таблица */
+.tb-panel .tb-table th {
+  border-bottom-color: rgba(255, 255, 255, 0.3);
+}
+
+.tb-panel .tb-table tr.is-top td {
+  background: rgba(194, 226, 60, 0.1);
+}
+
+.tb-panel .tb-status--gold {
+  color: #121212;
+}
+
+/* ---------- обёртка карточки категории и удаление ---------- */
+
+.tb-cat-wrap {
+  position: relative;
+  display: flex;
+}
+
+.tb-cat-wrap > .tb-cat {
+  flex: 1;
+  min-width: 0;
+}
+
+.tb-cat__del {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: background 0.2s, color 0.2s;
+}
+
+.tb-cat__del:hover {
+  background: #e5484d;
+  color: #ffffff;
+}
+
+.tb-cat--active + .tb-cat__del {
+  background: rgba(18, 18, 18, 0.12);
+  color: rgba(18, 18, 18, 0.7);
+}
+
+.tb-panel .tb-row--win .tb-score--empty {
+  background: rgba(194, 226, 60, 0.12);
+}
+
+@media (max-width: 720px) {
+  .tb-cat-wrap {
+    flex: 0 0 78%;
+    scroll-snap-align: center;
+  }
+
+  .tb-cat-wrap > .tb-cat {
+    flex: 1;
+  }
+}

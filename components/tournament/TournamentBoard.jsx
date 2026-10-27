@@ -60,9 +60,9 @@ export default function TournamentBoard({ cats, editable = false, onChange }) {
     open(cats.length);
   }
 
-  function removeCategory() {
-    if (!confirm(`Удалить категорию «${cats[active].name}» вместе с парами и счетами?`)) return;
-    onChange(cats.filter((_, i) => i !== active));
+  function removeCategory(ci) {
+    if (!confirm(`Удалить категорию «${cats[ci].name}» вместе с парами и счетами?`)) return;
+    onChange(cats.filter((_, i) => i !== ci));
     setActive(null);
   }
 
@@ -70,7 +70,14 @@ export default function TournamentBoard({ cats, editable = false, onChange }) {
     <div className="tb">
       <div className="tb-cats">
         {cats.map((cat, ci) => (
-          <CategoryCard key={ci} cat={cat} ci={ci} active={active === ci} onClick={() => open(ci)} />
+          <CategoryCard
+            key={ci}
+            cat={cat}
+            ci={ci}
+            active={active === ci}
+            onClick={() => open(ci)}
+            onRemove={editable ? () => removeCategory(ci) : null}
+          />
         ))}
         {editable ? (
           <button type="button" className="tb-cat tb-cat--add" onClick={addCategory}>
@@ -84,7 +91,7 @@ export default function TournamentBoard({ cats, editable = false, onChange }) {
 
       <div ref={boardRef} className="tb-anchor">
         {active !== null ? (
-          <Board key={active} cat={cats[active]} ci={active} editable={editable} edit={edit} onRemove={removeCategory} />
+          <Board key={active} cat={cats[active]} ci={active} editable={editable} edit={edit} onRemove={() => removeCategory(active)} />
         ) : null}
       </div>
     </div>
@@ -93,66 +100,73 @@ export default function TournamentBoard({ cats, editable = false, onChange }) {
 
 /* ---------- карточка категории ---------- */
 
-function CategoryCard({ cat, ci, active, onClick }) {
+function CategoryCard({ cat, ci, active, onClick, onRemove }) {
   const champ = champion(cat, "up");
   return (
-    <button type="button" onClick={onClick} className={cx("tb-cat", active && "tb-cat--active")}>
-      <span className="tb-cat__top">
-        <span className="tb-cat__num">{ci + 1}</span>
-        <span className="tb-cat__arrow">{active ? "↓" : "↗"}</span>
-      </span>
-
-      <span className="tb-cat__meta">
-        <span>{[toRoman(ci + 1), cat.group].filter(Boolean).join(" · ")}</span>
-        <span className="tb-cat__dashes">
-          {COUNTS.up.map((_, r) => (
-            <i key={r} className={roundDone(cat, "up", r) ? "is-on" : ""} />
-          ))}
+    <div className="tb-cat-wrap">
+      <button type="button" onClick={onClick} className={cx("tb-cat", active && "tb-cat--active")}>
+        <span className="tb-cat__top">
+          <span className="tb-cat__num">{ci + 1}</span>
+          <span className="tb-cat__arrow">{active ? "↓" : "↗"}</span>
         </span>
-      </span>
 
-      <span className="tb-cat__name">{cat.name}</span>
+        <span className="tb-cat__meta">
+          <span>{[toRoman(ci + 1), cat.group].filter(Boolean).join(" · ")}</span>
+          <span className="tb-cat__dashes">
+            {COUNTS.up.map((_, r) => (
+              <i key={r} className={roundDone(cat, "up", r) ? "is-on" : ""} />
+            ))}
+          </span>
+        </span>
 
-      <span className="tb-cat__rows">
-        <span>
-          <span>Старт</span>
-          <b>{formatStart(cat)}</b>
-        </span>
-        <span>
-          <span>Верхняя сетка</span>
-          <span>{cat.upInfo}</span>
-        </span>
-        <span>
-          <span>Нижняя сетка</span>
-          <span>{cat.loInfo}</span>
-        </span>
-      </span>
+        <span className="tb-cat__name">{cat.name}</span>
 
-      <span className="tb-cat__bottom">
-        {champ !== null ? (
-          <>
-            <span className="tb-cat__big tb-cat__big--champ">🏆</span>
-            <span className="tb-cat__sub">
-              <b>{teamNames(cat, champ).filter(Boolean).join(" / ")}</b>
-              <br />
-              чемпион
-            </span>
-          </>
-        ) : (
-          <>
-            <span className="tb-cat__big">
-              {playedCount(cat)}
-              <small>/{TOTAL_MATCHES}</small>
-            </span>
-            <span className="tb-cat__sub">
-              матчей
-              <br />
-              сыграно
-            </span>
-          </>
-        )}
-      </span>
-    </button>
+        <span className="tb-cat__rows">
+          <span>
+            <span>Старт</span>
+            <b>{formatStart(cat)}</b>
+          </span>
+          <span>
+            <span>Верхняя сетка</span>
+            <span>{cat.upInfo}</span>
+          </span>
+          <span>
+            <span>Нижняя сетка</span>
+            <span>{cat.loInfo}</span>
+          </span>
+        </span>
+
+        <span className="tb-cat__bottom">
+          {champ !== null ? (
+            <>
+              <span className="tb-cat__big tb-cat__big--champ">🏆</span>
+              <span className="tb-cat__sub">
+                <b>{teamNames(cat, champ).filter(Boolean).join(" / ")}</b>
+                <br />
+                чемпион
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="tb-cat__big">
+                {playedCount(cat)}
+                <small>/{TOTAL_MATCHES}</small>
+              </span>
+              <span className="tb-cat__sub">
+                матчей
+                <br />
+                сыграно
+              </span>
+            </>
+          )}
+        </span>
+      </button>
+      {onRemove ? (
+        <button type="button" className="tb-cat__del" title="Удалить категорию" aria-label="Удалить категорию" onClick={onRemove}>
+          ✕
+        </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -523,10 +537,10 @@ function TeamRow({ cat, br, r, i, k, t, match, w, ready, badSets, editable, edit
               disabled={scoreOff}
               value={set[k]}
               onChange={(e) => editMatch((m) => { m.s[si][k] = digits(e.target.value); })}
-              className={cx("tb-score", badSets.has(si) && "tb-score--bad")}
+              className={cx("tb-score", set[k] === "" && "tb-score--empty", badSets.has(si) && "tb-score--bad")}
             />
           ) : (
-            <span key={si} className={cx("tb-score", badSets.has(si) && "tb-score--bad")}>
+            <span key={si} className={cx("tb-score", set[k] === "" && "tb-score--empty", badSets.has(si) && "tb-score--bad")}>
               {set[k]}
             </span>
           )
