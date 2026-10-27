@@ -1519,3 +1519,12 @@ input.tb-score:disabled {
     flex: 1;
   }
 }
+
+/* сыгранный матч — лишь лёгкий намёк лаймом, без яркой рамки */
+.tb-panel .tb-match--done {
+  border-color: rgba(194, 226, 60, 0.22);
+}
+
+.tb-panel .tb-match__meta .tb-chip--xs {
+  border-color: rgba(194, 226, 60, 0.25);
+}
