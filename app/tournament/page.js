@@ -1,19 +1,19 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AutoRefresh from "@/components/tournament/AutoRefresh";
-import TournamentBoard from "@/components/tournament/TournamentBoard";
-import { getTournament } from "@/lib/repositories/tournament";
+import TournamentCard from "@/components/tournament/TournamentCard";
+import { getTournaments } from "@/lib/repositories/tournament";
 
 export const metadata = {
-  title: "Турнир — Top Padel Alicante",
-  description: "Сетки, счета и таблица результатов турнира по паделу в Аликанте.",
+  title: "Турниры — Top Padel Alicante",
+  description: "Турниры по паделу в Аликанте: сетки, счета и результаты.",
 };
 
-// Счёт меняется во время игр — всегда отдаём свежие данные
 export const dynamic = "force-dynamic";
 
-export default async function TournamentPage() {
-  const cats = await getTournament();
+export default async function TournamentsPage() {
+  const tournaments = await getTournaments();
+  const current = tournaments.filter((t) => !t.archived);
+  const archive = tournaments.filter((t) => t.archived);
 
   return (
     <main className="page" id="top">
@@ -21,19 +21,32 @@ export default async function TournamentPage() {
 
       <section className="news-hero">
         <div className="news-hero__inner">
-          <p className="eyebrow">Турнир по паделу</p>
-          <h1 className="news-hero__title">Выбирай, кто сегодня играет</h1>
+          <p className="eyebrow">Турниры по паделу</p>
+          <h1 className="news-hero__title">Турниры</h1>
           <p className="section-subtitle">
-            Семь категорий, в каждой верхняя и нижняя сетка. Нажми на категорию,
-            чтобы открыть её сетку. Счёт обновляется сам.
+            Выбери турнир, чтобы посмотреть категории, сетки и результаты.
           </p>
         </div>
       </section>
 
       <section className="tournament">
         <div className="tournament__inner">
-          <TournamentBoard cats={cats} />
-          <AutoRefresh />
+          {current.length ? (
+            <div className="tb-tours">
+              {current.map((t) => <TournamentCard key={t.id} tournament={t} />)}
+            </div>
+          ) : (
+            <p className="tb-empty">Новый турнир скоро появится.</p>
+          )}
+
+          {archive.length ? (
+            <>
+              <h2 className="tb-archive-title">Архив</h2>
+              <div className="tb-tours">
+                {archive.map((t) => <TournamentCard key={t.id} tournament={t} />)}
+              </div>
+            </>
+          ) : null}
         </div>
       </section>
 

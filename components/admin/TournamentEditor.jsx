@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import TournamentBoard from "@/components/tournament/TournamentBoard";
-import { saveTournamentCategory } from "@/lib/repositories/tournament";
+import { saveTournament } from "@/lib/repositories/tournament";
 
 const SAVE_DELAY = 700;
 
@@ -12,40 +12,45 @@ const STATUS_TEXT = {
   saved: "Сохранено — на сайте уже видно",
 };
 
-// Та же доска, что на сайте, но с полями ввода. Каждая изменённая категория
-// сохраняется в Supabase с небольшой задержкой после последней правки.
-export default function TournamentEditor({ initialCats }) {
-  const [cats, setCats] = useState(initialCats);
+// Название, описание, архив и категории турнира. Сохраняется весь турнир
+// целиком с небольшой задержкой после последней правки.
+export default function TournamentEditor({ tournament }) {
+  const [data, setData] = useState({
+    title: tournament.title,
+    subtitle: tournament.subtitle,
+    archived: tournament.archived,
+    categories: tournament.categories,
+  });
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState("");
-  const timers = useRef(new Map());
+  const timer = useRef(null);
+  const latest = useRef(data);
 
   useEffect(() => {
     const warn = (e) => {
-      if (timers.current.size > 0) e.preventDefault();
+      if (timer.current) e.preventDefault();
     };
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, []);
 
-  function handleChange(ci, cat) {
-    setCats((prev) => prev.map((c, i) => (i === ci ? cat : c)));
+  function update(patch) {
+    const next = { ...latest.current, ...patch };
+    latest.current = next;
+    setData(next);
     setStatus("pending");
-    clearTimeout(timers.current.get(ci));
-    timers.current.set(
-      ci,
-      setTimeout(async () => {
-        timers.current.delete(ci);
-        setStatus("saving");
-        try {
-          await saveTournamentCategory(ci, cat);
-          if (timers.current.size === 0) setStatus("saved");
-        } catch (err) {
-          setStatus("error");
-          setError(err instanceof Error ? err.message : "Не удалось сохранить");
-        }
-      }, SAVE_DELAY)
-    );
+    clearTimeout(timer.current);
+    timer.current = setTimeout(async () => {
+      timer.current = null;
+      setStatus("saving");
+      try {
+        await saveTournament(tournament.id, latest.current);
+        if (!timer.current) setStatus("saved");
+      } catch (err) {
+        setStatus("error");
+        setError(err instanceof Error ? err.message : "Не удалось сохранить");
+      }
+    }, SAVE_DELAY);
   }
 
   return (
@@ -55,7 +60,46 @@ export default function TournamentEditor({ initialCats }) {
           {status === "error" ? `Ошибка сохранения: ${error}` : STATUS_TEXT[status]}
         </p>
       ) : null}
-      <TournamentBoard cats={cats} editable onChange={handleChange} />
+
+      <div className="admin-card tb-editor-card">
+        <div className="admin-form">
+          <div className="admin-field">
+            <label htmlFor="tb-title">Название турнира</label>
+            <input
+              id="tb-title"
+              className="admin-input"
+              value={data.title}
+              onChange={(e) => update({ title: e.target.value })}
+            />
+          </div>
+          <div className="admin-field">
+            <label htmlFor="tb-subtitle">Описание</label>
+            <textarea
+              id="tb-subtitle"
+              className="admin-textarea"
+              rows={2}
+              value={data.subtitle}
+              placeholder="Например: Осенний турнир клуба, 31 октября — 10 ноября"
+              onChange={(e) => update({ subtitle: e.target.value })}
+            />
+            <span className="admin-field__hint">Показывается под названием на сайте.</span>
+          </div>
+          <label className="admin-checkbox">
+            <input
+              type="checkbox"
+              checked={data.archived}
+              onChange={(e) => update({ archived: e.target.checked })}
+            />
+            В архиве
+          </label>
+        </div>
+      </div>
+
+      <TournamentBoard
+        cats={data.categories}
+        editable
+        onChange={(categories) => update({ categories })}
+      />
     </>
   );
 }

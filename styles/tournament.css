@@ -1032,3 +1032,208 @@ input.tb-score:disabled {
   background: #fdecec;
   color: #c62828;
 }
+
+/* ---------- список турниров ---------- */
+
+.tb-tours {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+  gap: var(--gap-md);
+}
+
+.tb-tour {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  padding: clamp(20px, 1.8vw, 28px);
+  border-radius: var(--radius-lg);
+  background: var(--color-photo-bg-2);
+  color: var(--color-white);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tb-tour:hover {
+  transform: translateY(-4px);
+}
+
+.tb-tour--archived {
+  background: var(--color-card);
+  color: var(--color-dark);
+}
+
+.tb-tour__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.tb-tour__status {
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--color-green);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-dark);
+}
+
+.tb-tour--archived .tb-tour__status {
+  background: var(--color-white);
+}
+
+.tb-tour__arrow {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 16px;
+}
+
+.tb-tour--archived .tb-tour__arrow {
+  background: var(--color-white);
+}
+
+.tb-tour__title {
+  font-size: clamp(26px, 2.2vw, 34px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.tb-tour__subtitle {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: 0.65;
+}
+
+.tb-tour__cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.tb-tour__cats span {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  border: 1px solid currentColor;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+.tb-tour__bottom {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 24px;
+}
+
+.tb-tour__big {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -0.05em;
+}
+
+.tb-tour__big small {
+  font-size: 20px;
+  letter-spacing: 0;
+  opacity: 0.55;
+}
+
+.tb-tour__sub {
+  max-width: 16em;
+  padding-bottom: 3px;
+  font-size: 13px;
+  line-height: 1.3;
+  opacity: 0.7;
+}
+
+.tb-archive-title {
+  margin: clamp(48px, 5vw, 72px) 0 20px;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 700;
+}
+
+.tb-empty {
+  padding: 32px 0;
+  font-size: 15px;
+  color: var(--color-gray-text);
+}
+
+.tb-back {
+  margin-bottom: 20px;
+}
+
+/* ---------- админка: добавление категории и поля карточки ---------- */
+
+.tb-cat--add {
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1.5px dashed var(--color-border);
+  background: transparent;
+  color: var(--color-gray-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.tb-cat--add:hover {
+  border-color: var(--color-green-text);
+  color: var(--color-dark);
+}
+
+.tb-cat__plus {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-green);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--color-dark);
+}
+
+.tb-board__group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tb-board__group input {
+  min-width: 14em;
+  border: 0;
+  border-bottom: 1px dashed var(--color-border);
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  outline: none;
+}
+
+.tb-board__group input:focus {
+  border-bottom-color: var(--color-green-text);
+}
+
+.tb-board__infos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -8px 0 24px;
+}
+
+.tb-board__infos input {
+  min-width: 12em;
+}
+
+.tb-editor-card {
+  margin-bottom: 24px;
+}

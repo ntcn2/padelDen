@@ -2,9 +2,7 @@
 
 import { useRef, useState } from "react";
 import {
-  CAT_GROUPS,
   COUNTS,
-  ROMAN,
   ROUND_TITLES,
   TEAM_COUNT,
   TOTAL_MATCHES,
@@ -24,6 +22,7 @@ import {
   standings,
   teamLine,
   teamNames,
+  toRoman,
   winner,
 } from "@/lib/tournament";
 
@@ -31,9 +30,9 @@ const cx = (...parts) => parts.filter(Boolean).join(" ");
 const digits = (v) => v.replace(/\D/g, "").slice(0, 2);
 
 /**
- * Турнир целиком: карточки категорий, а под ними — две сетки и таблица
- * открытой категории. `editable` включает поля ввода (админка); изменения
- * отдаются наверх через onChange(индекс категории, новая категория).
+ * Категории турнира: карточки, а под ними — две сетки и таблица открытой
+ * категории. `editable` включает поля ввода, добавление и удаление категорий
+ * (админка); изменения отдаются наверх через onChange(новый массив категорий).
  */
 export default function TournamentBoard({ cats, editable = false, onChange }) {
   const [active, setActive] = useState(null);
@@ -53,8 +52,19 @@ export default function TournamentBoard({ cats, editable = false, onChange }) {
     if (active === null || !onChange) return;
     const next = structuredClone(cats[active]);
     fn(next);
-    onChange(active, next);
+    onChange(cats.map((c, i) => (i === active ? next : c)));
   };
+
+  function addCategory() {
+    onChange([...cats, newCategory(cats.length)]);
+    open(cats.length);
+  }
+
+  function removeCategory() {
+    if (!confirm(`Удалить категорию «${cats[active].name}» вместе с парами и счетами?`)) return;
+    onChange(cats.filter((_, i) => i !== active));
+    setActive(null);
+  }
 
   return (
     <div className="tb">
@@ -62,11 +72,19 @@ export default function TournamentBoard({ cats, editable = false, onChange }) {
         {cats.map((cat, ci) => (
           <CategoryCard key={ci} cat={cat} ci={ci} active={active === ci} onClick={() => open(ci)} />
         ))}
+        {editable ? (
+          <button type="button" className="tb-cat tb-cat--add" onClick={addCategory}>
+            <span className="tb-cat__plus">+</span>
+            Добавить категорию
+          </button>
+        ) : null}
       </div>
+
+      {!editable && cats.length === 0 ? <p className="tb-empty">Категории скоро появятся.</p> : null}
 
       <div ref={boardRef} className="tb-anchor">
         {active !== null ? (
-          <Board key={active} cat={cats[active]} ci={active} editable={editable} edit={edit} />
+          <Board key={active} cat={cats[active]} ci={active} editable={editable} edit={edit} onRemove={removeCategory} />
         ) : null}
       </div>
     </div>
@@ -85,7 +103,7 @@ function CategoryCard({ cat, ci, active, onClick }) {
       </span>
 
       <span className="tb-cat__meta">
-        <span>{ROMAN[ci]} · {CAT_GROUPS[ci]}</span>
+        <span>{[toRoman(ci + 1), cat.group].filter(Boolean).join(" · ")}</span>
         <span className="tb-cat__dashes">
           {COUNTS.up.map((_, r) => (
             <i key={r} className={roundDone(cat, "up", r) ? "is-on" : ""} />
@@ -102,11 +120,11 @@ function CategoryCard({ cat, ci, active, onClick }) {
         </span>
         <span>
           <span>Верхняя сетка</span>
-          <span>16 пар · 15 матчей</span>
+          <span>{cat.upInfo}</span>
         </span>
         <span>
           <span>Нижняя сетка</span>
-          <span>8 пар · 7 матчей</span>
+          <span>{cat.loInfo}</span>
         </span>
       </span>
 
@@ -140,7 +158,7 @@ function CategoryCard({ cat, ci, active, onClick }) {
 
 /* ---------- доска категории ---------- */
 
-function Board({ cat, ci, editable, edit }) {
+function Board({ cat, ci, editable, edit, onRemove }) {
   const [bulkOpen, setBulkOpen] = useState(false);
 
   // Enter в поле счёта или имени: перейти к следующему полю
@@ -158,15 +176,28 @@ function Board({ cat, ci, editable, edit }) {
     <div className="tb-board" onKeyDown={onKeyDown}>
       <div className="tb-board__head">
         <div className="tb-board__title-wrap">
-          <p className="eyebrow">{ROMAN[ci]} · {CAT_GROUPS[ci]}</p>
           {editable ? (
-            <input
-              className="tb-board__title tb-board__title--input"
-              value={cat.name}
-              onChange={(e) => edit((c) => { c.name = e.target.value; })}
-            />
+            <>
+              <label className="eyebrow tb-board__group">
+                {toRoman(ci + 1)} ·
+                <input
+                  value={cat.group}
+                  placeholder="группа, например Мужская"
+                  onChange={(e) => edit((c) => { c.group = e.target.value; })}
+                />
+              </label>
+              <input
+                className="tb-board__title tb-board__title--input"
+                value={cat.name}
+                placeholder="Название категории"
+                onChange={(e) => edit((c) => { c.name = e.target.value; })}
+              />
+            </>
           ) : (
-            <h2 className="tb-board__title">{cat.name}</h2>
+            <>
+              <p className="eyebrow">{[toRoman(ci + 1), cat.group].filter(Boolean).join(" · ")}</p>
+              <h2 className="tb-board__title">{cat.name}</h2>
+            </>
           )}
         </div>
 
@@ -207,16 +238,35 @@ function Board({ cat, ci, editable, edit }) {
                 type="button"
                 className="tb-btn tb-btn--danger"
                 onClick={() => {
-                  if (!confirm("Полностью очистить категорию: имена, счета и победителей?")) return;
-                  edit((c) => { Object.assign(c, newCategory(ci)); });
+                  if (!confirm("Очистить категорию: имена пар, счета, время и победителей? Название останется.")) return;
+                  edit((c) => {
+                    const fresh = newCategory(ci);
+                    Object.assign(c, fresh, { name: c.name, group: c.group, upInfo: c.upInfo, loInfo: c.loInfo });
+                  });
                 }}
               >
                 Очистить категорию
+              </button>
+              <button type="button" className="tb-btn tb-btn--danger" onClick={onRemove}>
+                Удалить категорию
               </button>
             </>
           ) : null}
         </div>
       </div>
+
+      {editable ? (
+        <div className="tb-board__infos">
+          <label className="tb-chip">
+            Верхняя сетка
+            <input value={cat.upInfo} onChange={(e) => edit((c) => { c.upInfo = e.target.value; })} />
+          </label>
+          <label className="tb-chip">
+            Нижняя сетка
+            <input value={cat.loInfo} onChange={(e) => edit((c) => { c.loInfo = e.target.value; })} />
+          </label>
+        </div>
+      ) : null}
 
       {editable && bulkOpen ? <BulkPanel cat={cat} edit={edit} onClose={() => setBulkOpen(false)} /> : null}
 

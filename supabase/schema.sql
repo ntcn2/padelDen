@@ -253,3 +253,34 @@ create policy "public read tournament" on public.tournament_categories
 
 grant select on public.tournament_categories to anon, authenticated;
 grant all privileges on public.tournament_categories to service_role;
+
+-- =========================================================================
+-- 7. TOURNAMENTS — несколько турниров. Один турнир — одна строка, все его
+-- категории с сетками в jsonb `categories` (null = 7 категорий по умолчанию).
+-- Заменяет tournament_categories из раздела 6: первый турнир переносится
+-- оттуда автоматически. Читается публично, пишется только service_role.
+-- =========================================================================
+
+create table if not exists public.tournaments (
+  id uuid primary key default gen_random_uuid(),
+  title text not null default '',
+  subtitle text not null default '',
+  archived boolean not null default false,
+  categories jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.tournaments enable row level security;
+
+drop policy if exists "public read tournaments" on public.tournaments;
+create policy "public read tournaments" on public.tournaments
+  for select using (true);
+
+grant select on public.tournaments to anon, authenticated;
+grant all privileges on public.tournaments to service_role;
+
+insert into public.tournaments (title, categories)
+select 'Турнир по паделу',
+       (select jsonb_agg(data order by id) from public.tournament_categories)
+where not exists (select 1 from public.tournaments);
