@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowUpRight } from "./Icons";
 import { useAccordion } from "./useAccordion";
 import Reveal from "./Reveal";
+import { INSTAGRAM_URL } from "./socialLinks";
 
 function GalleryRow({ images }) {
   const { openIndex, groupProps, itemProps } = useAccordion(0);
@@ -119,7 +120,7 @@ export default function Gallery({ categories, photos }) {
           </>
         )}
 
-        <a className="gallery__cta" href="#">
+        <a className="gallery__cta" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
           Подписывайся в Instagram
           <ArrowUpRight />
         </a>

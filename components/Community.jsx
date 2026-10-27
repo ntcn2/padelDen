@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { SendIcon } from "./Icons";
 import Reveal from "./Reveal";
+import { TELEGRAM_URL } from "./socialLinks";
 
 const BUBBLES = [
   {
@@ -60,7 +61,7 @@ export default function Community() {
             <Reveal
               as="a"
               className="community__cta"
-              href="https://t.me/+Hsd53uTBjWc4N2Rk"
+              href={TELEGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
               delay={280}

@@ -1,18 +1,12 @@
-import {
-  InstagramIcon,
-  PinIcon,
-  SendIcon,
-  WhatsappIcon,
-} from "./Icons";
+import { InstagramIcon, PinIcon, SendIcon } from "./Icons";
 import { FOOTER_NAV_LINKS } from "./navLinks";
-
-const TELEGRAM_URL = "https://t.me/+Hsd53uTBjWc4N2Rk";
+import { DENIS_TELEGRAM_URL, INSTAGRAM_URL, TELEGRAM_URL } from "./socialLinks";
 
 const CONTACTS = [
   { Icon: PinIcon, label: "Aликанте, Испания", href: "#" },
-  { Icon: InstagramIcon, label: "Instagram", href: "#" },
-  { Icon: SendIcon, label: "Telegram", href: TELEGRAM_URL },
-  { Icon: WhatsappIcon, label: "WhatsApp", href: "#" },
+  { Icon: InstagramIcon, label: "Instagram", href: INSTAGRAM_URL },
+  { Icon: SendIcon, label: "Telegram-группа", href: TELEGRAM_URL },
+  { Icon: SendIcon, label: "Денис — @denystia", href: DENIS_TELEGRAM_URL },
 ];
 
 export default function Footer() {
@@ -73,7 +67,13 @@ export default function Footer() {
               Играем. Тренируемся. Растём вместе.
             </p>
             <div className="footer__socials">
-              <a className="icon-circle footer__social" href="#">
+              <a
+                className="icon-circle footer__social"
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
                 <InstagramIcon />
               </a>
               <a
@@ -81,11 +81,9 @@ export default function Footer() {
                 href={TELEGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Telegram"
               >
                 <SendIcon />
-              </a>
-              <a className="icon-circle footer__social" href="#">
-                <WhatsappIcon />
               </a>
             </div>
           </div>

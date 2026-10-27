@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CloseIcon, MenuIcon, SendIcon } from "./Icons";
 import { NAV_LINKS } from "./navLinks";
-
-const TELEGRAM_URL = "https://t.me/+Hsd53uTBjWc4N2Rk";
+import { TELEGRAM_URL } from "./socialLinks";
 
 export default function Header() {
   const [open, setOpen] = useState(false);

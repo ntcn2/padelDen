@@ -1,5 +1,6 @@
 import { ArrowRight, CalendarIcon, UserIcon, UsersIcon } from "./Icons";
 import Reveal from "./Reveal";
+import { DENIS_TELEGRAM_URL } from "./socialLinks";
 import { getTrainingOptions, getTrainingPackages } from "@/lib/repositories/trainings";
 import { formatPrice } from "@/lib/format";
 
@@ -15,7 +16,7 @@ function pluralizeSessions(count) {
   return "тренировок";
 }
 
-const CONTACT_URL = "https://t.me/denystia";
+const CONTACT_URL = DENIS_TELEGRAM_URL;
 
 function formatPriceParts(value, unit) {
   const formatted = formatPrice(value);
