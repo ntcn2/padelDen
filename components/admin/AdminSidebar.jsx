@@ -7,6 +7,7 @@ import { logout } from "@/lib/repositories/auth";
 const ITEMS = [
   { href: "/admin", label: "Dashboard", exact: true },
   { href: "/admin/games", label: "Ближайшие игры" },
+  { href: "/admin/tournament", label: "Турнир" },
   { href: "/admin/pricing", label: "Цены" },
   { href: "/admin/gallery", label: "Галерея" },
   { href: "/admin/journal", label: "Padel Journal" },

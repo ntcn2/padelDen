@@ -233,3 +233,23 @@ grant all privileges on all sequences in schema public to service_role;
 alter default privileges in schema public grant select on tables to anon, authenticated;
 alter default privileges in schema public grant all privileges on tables to service_role;
 alter default privileges in schema public grant all privileges on sequences to service_role;
+
+-- =========================================================================
+-- 6. TOURNAMENT — одна строка на категорию (0..6), вся сетка в jsonb.
+-- Читается публично (/tournament), пишется только service_role из админки.
+-- =========================================================================
+
+create table if not exists public.tournament_categories (
+  id smallint primary key check (id between 0 and 6),
+  data jsonb not null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.tournament_categories enable row level security;
+
+drop policy if exists "public read tournament" on public.tournament_categories;
+create policy "public read tournament" on public.tournament_categories
+  for select using (true);
+
+grant select on public.tournament_categories to anon, authenticated;
+grant all privileges on public.tournament_categories to service_role;
