@@ -2,9 +2,15 @@ import { ArrowRight, CalendarIcon, UserIcon, UsersIcon } from "./Icons";
 import Reveal from "./Reveal";
 import { DENIS_TELEGRAM_URL } from "./socialLinks";
 import { getTrainingOptions, getTrainingPackages } from "@/lib/repositories/trainings";
-import { formatPrice } from "@/lib/format";
 
 const OPTION_ICONS = [UserIcon, UsersIcon];
+
+// Цены на сайте не показываем — только что входит в тренировку.
+// Цены по-прежнему ведутся в админке: из них считается выгода пакетов.
+const OPTION_PERKS = [
+  ["Тренер работает только с тобой", "План под твой уровень и цели", "Разбор техники и ошибок"],
+  ["Игроки твоего уровня", "Игровые упражнения и розыгрыши", "Новые партнёры для игры"],
+];
 
 function pluralizeSessions(count) {
   const n = Number(count);
@@ -18,14 +24,27 @@ function pluralizeSessions(count) {
 
 const CONTACT_URL = DENIS_TELEGRAM_URL;
 
-function formatPriceParts(value, unit) {
-  const formatted = formatPrice(value);
-  const euroIndex = formatted.lastIndexOf("€");
-  if (euroIndex === -1) return { amount: formatted, currency: "" };
-  return {
-    amount: formatted.slice(0, euroIndex).trimEnd(),
-    currency: formatted.slice(euroIndex),
-  };
+function priceRequestUrl(title) {
+  const text = `Здравствуйте! Подскажите, пожалуйста, стоимость: ${title.toLowerCase()}`;
+  return `${DENIS_TELEGRAM_URL}?text=${encodeURIComponent(text)}`;
+}
+
+// «Пакеты на 4 и 8 тренировок», «выгоднее до 25%» — без самих цен.
+function packageHint(pkg) {
+  const tiers = pkg?.tiers.filter((t) => Number(t.sessionsCount) > 0) ?? [];
+  if (tiers.length === 0) return null;
+  const counts = tiers.map((t) => Number(t.sessionsCount));
+  const last = counts[counts.length - 1];
+  const label = `Пакеты на ${counts.length > 1 ? `${counts.slice(0, -1).join(", ")} и ` : ""}${last} ${pluralizeSessions(last)}`;
+  const discount = Math.max(
+    0,
+    ...tiers.map((t) =>
+      Number(t.oldPrice) > 0 && Number(t.price) > 0
+        ? Math.round((1 - Number(t.price) / Number(t.oldPrice)) * 100)
+        : 0
+    )
+  );
+  return { label, discount };
 }
 
 export default async function Pricing() {
@@ -60,8 +79,8 @@ export default async function Pricing() {
         <div className="pricing__cards">
           {options.map((option, i) => {
             const Icon = OPTION_ICONS[i % OPTION_ICONS.length];
-            const pkg = packages[i];
-            const { amount, currency } = formatPriceParts(option.price);
+            const hint = packageHint(packages[i]);
+            const perks = OPTION_PERKS[i % OPTION_PERKS.length];
             return (
               <Reveal
                 as="article"
@@ -86,38 +105,35 @@ export default async function Pricing() {
                   <p className="pricing-card__desc">{option.description}</p>
                 )}
 
-                <div className="pricing-card__body">
-                  <div className="pricing-card__price">
-                    <span className="pricing-card__price-amount">
-                      {amount} <span className="pricing-card__price-currency">{currency}</span>
-                    </span>
-                    <span className="pricing-card__price-unit">/ {option.unit}</span>
+                <ul className="pricing-card__perks">
+                  {perks.map((perk) => (
+                    <li key={perk} className="pricing-card__perk">
+                      {perk}
+                    </li>
+                  ))}
+                </ul>
+
+                {hint && (
+                  <div className="pricing-card__package">
+                    <span className="pricing-card__package-label">{hint.label}</span>
+                    {hint.discount > 0 && (
+                      <span className="pricing-card__package-badge">
+                        выгоднее до {hint.discount}%
+                      </span>
+                    )}
                   </div>
+                )}
 
-                  {pkg && (
-                    <div className="pricing-card__tiers">
-                      {pkg.tiers.map((tier, ti) => (
-                        <div key={ti} className="pricing-card__tier">
-                          <span className="pricing-card__tier-label">
-                            {tier.sessionsCount} {pluralizeSessions(tier.sessionsCount)}
-                          </span>
-                          <span className="pricing-card__tier-price">
-                            {tier.oldPrice && <s>{formatPrice(tier.oldPrice)}</s>}
-                            {formatPrice(tier.price)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {option.note && <p className="pricing-card__note">{option.note}</p>}
-
-                <a className="pricing-card__cta" href={option.registrationUrl || "#"}>
+                <a
+                  className="pricing-card__cta"
+                  href={priceRequestUrl(option.title)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <span className="icon-circle pricing-card__cta-icon">
                     <ArrowRight />
                   </span>
-                  Записаться
+                  Узнать стоимость
                 </a>
               </Reveal>
             );

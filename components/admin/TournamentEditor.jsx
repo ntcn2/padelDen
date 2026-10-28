@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import TournamentBoard from "@/components/tournament/TournamentBoard";
-import { saveTournament } from "@/lib/repositories/tournament";
+import { TrashIcon } from "@/components/Icons";
+import { deleteTournament, saveTournament } from "@/lib/repositories/tournament";
 
 const SAVE_DELAY = 700;
 
@@ -15,6 +17,8 @@ const STATUS_TEXT = {
 // Название, описание, архив и категории турнира. Сохраняется весь турнир
 // целиком с небольшой задержкой после последней правки.
 export default function TournamentEditor({ tournament }) {
+  const router = useRouter();
+  const [deleting, setDeleting] = useState(false);
   const [data, setData] = useState({
     title: tournament.title,
     subtitle: tournament.subtitle,
@@ -51,6 +55,22 @@ export default function TournamentEditor({ tournament }) {
         setError(err instanceof Error ? err.message : "Не удалось сохранить");
       }
     }, SAVE_DELAY);
+  }
+
+  async function handleDelete() {
+    const name = latest.current.title || "Без названия";
+    if (!confirm(`Удалить турнир «${name}» со всеми сетками и счетами? Это нельзя отменить.`)) return;
+    clearTimeout(timer.current);
+    timer.current = null;
+    setDeleting(true);
+    try {
+      await deleteTournament(tournament.id);
+      router.push("/admin/tournament");
+    } catch (err) {
+      setDeleting(false);
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Не удалось удалить");
+    }
   }
 
   return (
@@ -92,6 +112,16 @@ export default function TournamentEditor({ tournament }) {
             />
             В архиве
           </label>
+          <div>
+            <button
+              type="button"
+              className="admin-btn admin-btn--danger admin-btn--sm"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              <TrashIcon width={14} height={14} /> {deleting ? "Удаляем…" : "Удалить турнир"}
+            </button>
+          </div>
         </div>
       </div>
 

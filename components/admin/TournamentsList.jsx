@@ -42,7 +42,7 @@ export default function TournamentsList({ tournaments }) {
         <div>
           <h1 className="admin-title">Турниры</h1>
           <p className="admin-subtitle">
-            Текущие турниры показываются на сайте первыми, архивные — ниже, в блоке «Архив».
+            Текущие турниры показываются на сайте первыми, архивные — ниже, в блоке «Архив». Ненужный турнир можно удалить совсем.
           </p>
         </div>
         <button type="button" className="admin-btn admin-btn--accent" onClick={handleCreate} disabled={creating}>
@@ -78,10 +78,9 @@ export default function TournamentsList({ tournaments }) {
                   <button
                     type="button"
                     className="admin-btn admin-btn--danger admin-btn--sm"
-                    aria-label="Удалить"
                     onClick={() => handleDelete(t)}
                   >
-                    <TrashIcon width={14} height={14} />
+                    <TrashIcon width={14} height={14} /> Удалить
                   </button>
                 </div>
               </div>

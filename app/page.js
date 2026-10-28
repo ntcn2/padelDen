@@ -5,6 +5,7 @@ import Pricing from "@/components/Pricing";
 import Gallery from "@/components/Gallery";
 import Articles from "@/components/Articles";
 import Community from "@/components/Community";
+import Partners from "@/components/Partners";
 import Footer from "@/components/Footer";
 import { getNextUpcomingGame, getPublishedGames } from "@/lib/repositories/games";
 import { getGalleryData } from "@/lib/repositories/gallery";
@@ -32,6 +33,7 @@ export default async function Home() {
       <Gallery categories={gallery.categories} photos={gallery.photos} />
       <Articles />
       <Community />
+      <Partners />
       <Footer />
     </main>
   );
