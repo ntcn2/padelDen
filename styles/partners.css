@@ -34,12 +34,23 @@
 
 .partners__logo img {
   object-fit: contain;
-  filter: grayscale(1);
-  transition: filter 0.3s ease;
 }
 
-.partners__card:hover .partners__logo img {
-  filter: none;
+.partners__card--fill {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+}
+
+.partners__card--fill .partners__logo {
+  position: absolute;
+  inset: 0;
+  max-height: none;
+}
+
+.partners__card--fill .partners__logo img {
+  object-fit: cover;
 }
 
 .partners__name {

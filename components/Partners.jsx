@@ -2,10 +2,11 @@ import Image from "next/image";
 import Reveal from "./Reveal";
 
 // Чтобы добавить логотип: положить файл в public/images/partners/ и указать путь в logo.
+// fill — логотип со своим цветным фоном растягивается на всю карточку.
 const PARTNERS = [
-  { name: "Nox", caption: "Падел-бренд" },
-  { name: "M1 Padel", caption: "Падел-магазин" },
-  { name: "El Salt Padel Club", caption: "Падел-клуб" },
+  { name: "Nox", caption: "Падел-бренд", logo: "/images/partners/nox.png", fill: true },
+  { name: "M1 Padel", caption: "Падел-магазин", logo: "/images/partners/m1-padel.png" },
+  { name: "El Salt Padel Club", caption: "Падел-клуб", logo: "/images/partners/el-salt.png" },
   { name: "Florex", caption: "Floristería", logo: "/images/partners/florex.png" },
 ];
 
@@ -29,7 +30,11 @@ export default function Partners() {
 
         <div className="partners__grid">
           {PARTNERS.map((partner, i) => (
-            <Reveal key={partner.name} className="partners__card" delay={i * 80}>
+            <Reveal
+              key={partner.name}
+              className={`partners__card${partner.fill ? " partners__card--fill" : ""}`}
+              delay={i * 80}
+            >
               {partner.logo ? (
                 <span className="partners__logo">
                   <Image
