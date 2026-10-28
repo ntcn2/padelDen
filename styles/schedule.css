@@ -179,3 +179,28 @@
     min-height: 360px;
   }
 }
+
+/* Планшеты и телефоны: наведения нет, поэтому все карточки сразу
+   показываем «открытыми» — с фото, светлым текстом и равной шириной. */
+@media (max-width: 900px), (hover: none) {
+  .schedule__card,
+  .schedule__card--open {
+    flex-grow: 1;
+    color: var(--color-white);
+  }
+  .schedule__card::before,
+  .schedule__card-photo {
+    opacity: 1;
+  }
+  .schedule__card-tag {
+    background: var(--color-white);
+    border-color: transparent;
+  }
+  .schedule__card-price {
+    color: var(--color-green);
+  }
+  .schedule__card-cta {
+    background: var(--color-white);
+    color: var(--color-dark);
+  }
+}
