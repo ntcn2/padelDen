@@ -26,16 +26,11 @@
 }
 
 .header__logo-mark {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-  width: clamp(26px, 2vw, 32px);
-  height: clamp(26px, 2vw, 32px);
-}
-
-.header__logo-mark span {
-  border-radius: 40%;
-  background: var(--color-green);
+  width: clamp(44px, 3.4vw, 56px);
+  height: clamp(44px, 3.4vw, 56px);
+  flex-shrink: 0;
+  /* у картинки белый фон — растворяем его в фоне страницы */
+  mix-blend-mode: multiply;
 }
 
 .header__logo-text {

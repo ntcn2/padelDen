@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CloseIcon, MenuIcon, SendIcon } from "./Icons";
@@ -20,12 +21,7 @@ export default function Header() {
     <header className="header">
       <div className="header__inner">
         <Link className="header__logo" href="/">
-          <span className="header__logo-mark" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-            <span />
-          </span>
+          <Image className="header__logo-mark" src="/images/logo.jpg" alt="" width={112} height={112} preload />
           <span className="header__logo-text">
             <span className="header__logo-line">TOP PADEL</span>
             <span className="header__logo-line">ALICANTE</span>

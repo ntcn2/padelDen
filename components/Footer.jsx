@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { InstagramIcon, PinIcon, SendIcon } from "./Icons";
 import { FOOTER_NAV_LINKS } from "./navLinks";
 import { DENIS_TELEGRAM_URL, INSTAGRAM_URL, TELEGRAM_URL } from "./socialLinks";
@@ -17,12 +18,7 @@ export default function Footer() {
 
         <div className="footer__row">
           <div className="footer__logo">
-            <span className="footer__logo-mark" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-              <span />
-            </span>
+            <Image className="footer__logo-mark" src="/images/logo.jpg" alt="" width={112} height={112} />
             <span className="footer__logo-text">
               <span>TOP PADEL</span>
               <span>ALICANTE</span>

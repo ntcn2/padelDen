@@ -25,16 +25,11 @@
 }
 
 .footer__logo-mark {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
-  width: 32px;
-  height: 32px;
-}
-
-.footer__logo-mark span {
-  border-radius: 50%;
-  background: var(--color-green);
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  /* у картинки белый фон — растворяем его в фоне страницы */
+  mix-blend-mode: multiply;
 }
 
 .footer__logo-text {
