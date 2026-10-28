@@ -3,7 +3,6 @@
 import Image from "next/image";
 import {
   ArrowRight,
-  ArrowUpRight,
   ClockIcon,
   GridIcon,
   PinIcon,
@@ -121,11 +120,6 @@ export default function Schedule({ games }) {
             })}
           </div>
         )}
-
-        <a className="link-arrow schedule__link" href="#">
-          Все игры и мероприятия
-          <ArrowUpRight />
-        </a>
       </div>
     </section>
   );

@@ -165,10 +165,6 @@
   color: var(--color-dark);
 }
 
-.schedule__link {
-  margin-top: clamp(20px, 2vw, 32px);
-}
-
 @media (max-width: 900px) {
   .schedule__cards {
     flex-direction: column;
