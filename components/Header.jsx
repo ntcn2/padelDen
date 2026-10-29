@@ -9,6 +9,14 @@ import { TELEGRAM_URL } from "./socialLinks";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -18,7 +26,7 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="header">
+    <header className={`header${scrolled ? " header--scrolled" : ""}`}>
       <div className="header__inner">
         <Link className="header__logo" href="/">
           <Image className="header__logo-mark" src="/images/logo.jpg" alt="" width={112} height={112} preload />
