@@ -291,17 +291,17 @@ function Board({ cat, ci, editable, edit, onRemove }) {
       {editable ? (
         <div className="tb-board__infos">
           <label className="tb-chip">
-            Количество пар
+            Количество игроков
             <select
               value={cat.size}
               onChange={(e) => {
                 const n = +e.target.value;
-                if (playedCount(cat) > 0 && !confirm("Изменение количества пар перестроит сетку и сбросит все счета. Имена останутся. Продолжить?")) return;
+                if (playedCount(cat) > 0 && !confirm("Изменение количества игроков перестроит сетку и сбросит все счета. Имена останутся. Продолжить?")) return;
                 edit((c) => resizeCategory(c, n));
               }}
             >
               {Array.from({ length: MAX_TEAMS - MIN_TEAMS + 1 }, (_, k) => MIN_TEAMS + k).map((n) => (
-                <option key={n} value={n}>{n}</option>
+                <option key={n} value={n}>{n * 2} ({pairs(n)})</option>
               ))}
             </select>
           </label>
