@@ -2,7 +2,7 @@ export const NAV_LINKS = [
   { label: "Ближайшие игры", href: "/#schedule" },
   { label: "Турниры", href: "/tournament" },
   { label: "Тренировки", href: "/#pricing" },
-  { label: "О нас", href: "/#community" },
+  { label: "Партнёры", href: "/#partners" },
   { label: "Контакты", href: "#footer" },
 ];
 

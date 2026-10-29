@@ -1,5 +1,7 @@
 import Image from "next/image";
+import { ArrowRight, SendIcon } from "./Icons";
 import Reveal from "./Reveal";
+import { DENIS_TELEGRAM_URL } from "./socialLinks";
 
 // Чтобы добавить логотип: положить файл в public/images/partners/ и указать путь в logo.
 // fill — логотип со своим цветным фоном растягивается на всю карточку.
@@ -53,6 +55,31 @@ export default function Partners() {
             </Reveal>
           ))}
         </div>
+
+        <Reveal as="div" className="partners__cta" delay={200}>
+          <div className="partners__cta-left">
+            <span className="icon-circle partners__cta-icon">
+              <SendIcon />
+            </span>
+            <div>
+              <p className="partners__cta-title">Хотите стать нашим партнёром?</p>
+              <p className="partners__cta-text">
+                Напишите Денису в Telegram — обсудим, как можем быть полезны друг другу.
+              </p>
+            </div>
+          </div>
+          <a
+            className="partners__cta-button"
+            href={DENIS_TELEGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="icon-circle icon-circle--filled partners__cta-button-icon">
+              <ArrowRight />
+            </span>
+            Написать Денису
+          </a>
+        </Reveal>
       </div>
     </section>
   );
