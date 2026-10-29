@@ -4,9 +4,8 @@ const SITE_DESCRIPTION =
   "Падел объединяет людей и превращает обычную игру в часть твоей жизни. Турниры, тренировки и игровые встречи в Аликанте.";
 
 export const metadata = {
-  // Адрес для картинки превью ссылки (opengraph-image.jpg). Когда заработает
-  // toppadelalicante.com — заменить на https://www.toppadelalicante.com.
-  metadataBase: new URL("https://top-padel-alicante.vercel.app"),
+  // Адрес для картинки превью ссылки (opengraph-image.jpg).
+  metadataBase: new URL("https://www.toppadelalicante.com"),
   title: "Top Padel Alicante",
   description: SITE_DESCRIPTION,
   openGraph: {
