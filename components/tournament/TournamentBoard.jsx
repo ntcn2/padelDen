@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import {
   BYE,
   MAX_TEAMS,
-  MIN_TEAMS,
+  SIZES,
   bracketSize,
   champion,
   clampSize,
@@ -150,7 +150,7 @@ function CategoryCard({ cat, ci, active, onClick, onRemove }) {
           </span>
           <span>
             <span>Нижняя сетка</span>
-            <span>{pairs(loserCount(cat))} · {matches(matchCount(cat, "lo"))}</span>
+            <span>{loserCount(cat) > 0 ? `${pairs(loserCount(cat))} · ${matches(matchCount(cat, "lo"))}` : "не проводится"}</span>
           </span>
         </span>
 
@@ -291,17 +291,17 @@ function Board({ cat, ci, editable, edit, onRemove }) {
       {editable ? (
         <div className="tb-board__infos">
           <label className="tb-chip">
-            Количество игроков
+            Количество пар
             <select
               value={cat.size}
               onChange={(e) => {
                 const n = +e.target.value;
-                if (playedCount(cat) > 0 && !confirm("Изменение количества игроков перестроит сетку и сбросит все счета. Имена останутся. Продолжить?")) return;
+                if (playedCount(cat) > 0 && !confirm("Изменение количества пар перестроит сетку и сбросит все счета. Имена останутся. Продолжить?")) return;
                 edit((c) => resizeCategory(c, n));
               }}
             >
-              {Array.from({ length: MAX_TEAMS - MIN_TEAMS + 1 }, (_, k) => MIN_TEAMS + k).map((n) => (
-                <option key={n} value={n}>{n * 2} ({pairs(n)})</option>
+              {SIZES.map((n) => (
+                <option key={n} value={n}>{pairs(n)} · {n * 2} игроков</option>
               ))}
             </select>
           </label>
@@ -309,7 +309,7 @@ function Board({ cat, ci, editable, edit, onRemove }) {
             Верхняя сетка <b>{pairs(cat.size)} · {matches(matchCount(cat, "up"))}</b>
           </span>
           <span className="tb-chip">
-            Нижняя сетка <b>{pairs(loserCount(cat))} · {matches(matchCount(cat, "lo"))}</b>
+            Нижняя сетка <b>{loserCount(cat) > 0 ? `${pairs(loserCount(cat))} · ${matches(matchCount(cat, "lo"))}` : "не проводится"}</b>
           </span>
         </div>
       ) : null}
@@ -342,7 +342,7 @@ function BulkPanel({ cat, edit, onClose }) {
 
   return (
     <div className="tb-panel tb-bulk">
-      <p>Одна пара в строке, игроки через «/». От {MIN_TEAMS} до {MAX_TEAMS} строк — сколько строк, столько пар будет в сетке.</p>
+      <p>Одна пара в строке, игроки через «/». В сетке может быть {SIZES.join(", ")} пар — если строк другое число, сетка возьмёт ближайший больший размер.</p>
       <textarea
         autoFocus
         rows={8}
@@ -667,7 +667,11 @@ function Results({ cat }) {
         <h3>Таблица результатов</h3>
         <p>
           Места 1–{bracketSize(cat.size) / 2} разыгрываются в верхней сетке
-          {loserCount(cat) > 0 ? `, ${bracketSize(cat.size) / 2 + 1}–${cat.size} — в нижней` : ""}. Обновляется по мере ввода счёта.
+          {loserCount(cat) > 0
+            ? `, ${bracketSize(cat.size) / 2 + 1}–${cat.size} — в нижней`
+            : cat.size > bracketSize(cat.size) / 2
+              ? `, проигравший первый матч занимает ${cat.size}-е место`
+              : ""}. Обновляется по мере ввода счёта.
         </p>
       </div>
       <div className="tb-table-wrap">
