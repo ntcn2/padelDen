@@ -2,21 +2,29 @@
 
 import { useRef, useState } from "react";
 import {
-  COUNTS,
-  ROUND_TITLES,
-  TEAM_COUNT,
-  TOTAL_MATCHES,
+  BYE,
+  MAX_TEAMS,
+  MIN_TEAMS,
+  bracketSize,
   champion,
+  clampSize,
+  counts,
+  firstRoundShort,
   formatStart,
   initials,
+  isBye,
   isWalkover,
+  loserCount,
+  matchCount,
   matchResult,
   newCategory,
   newRounds,
   parseTeams,
   participants,
   playedCount,
+  resizeCategory,
   roundDone,
+  roundTitle,
   shuffle,
   sourceLabel,
   standings,
@@ -28,6 +36,16 @@ import {
 
 const cx = (...parts) => parts.filter(Boolean).join(" ");
 const digits = (v) => v.replace(/\D/g, "").slice(0, 2);
+
+// 1 пара, 2 пары, 5 пар
+function plural(n, [one, few, many]) {
+  const d = n % 10;
+  const dd = n % 100;
+  const word = d === 1 && dd !== 11 ? one : d >= 2 && d <= 4 && (dd < 12 || dd > 14) ? few : many;
+  return `${n} ${word}`;
+}
+const pairs = (n) => plural(n, ["пара", "пары", "пар"]);
+const matches = (n) => plural(n, ["матч", "матча", "матчей"]);
 
 /**
  * Категории турнира: карточки, а под ними — две сетки и таблица открытой
@@ -113,7 +131,7 @@ function CategoryCard({ cat, ci, active, onClick, onRemove }) {
         <span className="tb-cat__meta">
           <span>{[toRoman(ci + 1), cat.group].filter(Boolean).join(" · ")}</span>
           <span className="tb-cat__dashes">
-            {COUNTS.up.map((_, r) => (
+            {counts(cat).up.map((_, r) => (
               <i key={r} className={roundDone(cat, "up", r) ? "is-on" : ""} />
             ))}
           </span>
@@ -128,11 +146,11 @@ function CategoryCard({ cat, ci, active, onClick, onRemove }) {
           </span>
           <span>
             <span>Верхняя сетка</span>
-            <span>{cat.upInfo}</span>
+            <span>{pairs(cat.size)} · {matches(matchCount(cat, "up"))}</span>
           </span>
           <span>
             <span>Нижняя сетка</span>
-            <span>{cat.loInfo}</span>
+            <span>{pairs(loserCount(cat))} · {matches(matchCount(cat, "lo"))}</span>
           </span>
         </span>
 
@@ -150,7 +168,7 @@ function CategoryCard({ cat, ci, active, onClick, onRemove }) {
             <>
               <span className="tb-cat__big">
                 {playedCount(cat)}
-                <small>/{TOTAL_MATCHES}</small>
+                <small>/{matchCount(cat)}</small>
               </span>
               <span className="tb-cat__sub">
                 матчей
@@ -228,7 +246,7 @@ function Board({ cat, ci, editable, edit, onRemove }) {
             </span>
           )}
           <span className="tb-chip tb-chip--accent">
-            {playedCount(cat)} / {TOTAL_MATCHES} матчей
+            {playedCount(cat)} / {matches(matchCount(cat))}
           </span>
           {editable ? (
             <>
@@ -241,8 +259,8 @@ function Board({ cat, ci, editable, edit, onRemove }) {
                 onClick={() => {
                   if (!confirm("Сбросить все счета и победителей в этой категории? Имена останутся.")) return;
                   edit((c) => {
-                    c.up = newRounds("up");
-                    c.lo = newRounds("lo");
+                    c.up = newRounds("up", c.size);
+                    c.lo = newRounds("lo", c.size);
                   });
                 }}
               >
@@ -254,8 +272,9 @@ function Board({ cat, ci, editable, edit, onRemove }) {
                 onClick={() => {
                   if (!confirm("Очистить категорию: имена пар, счета, время и победителей? Название останется.")) return;
                   edit((c) => {
-                    const fresh = newCategory(ci);
-                    Object.assign(c, fresh, { name: c.name, group: c.group, upInfo: c.upInfo, loInfo: c.loInfo });
+                    const size = c.size;
+                    Object.assign(c, newCategory(ci), { name: c.name, group: c.group });
+                    resizeCategory(c, size);
                   });
                 }}
               >
@@ -272,20 +291,33 @@ function Board({ cat, ci, editable, edit, onRemove }) {
       {editable ? (
         <div className="tb-board__infos">
           <label className="tb-chip">
-            Верхняя сетка
-            <input value={cat.upInfo} onChange={(e) => edit((c) => { c.upInfo = e.target.value; })} />
+            Количество пар
+            <select
+              value={cat.size}
+              onChange={(e) => {
+                const n = +e.target.value;
+                if (playedCount(cat) > 0 && !confirm("Изменение количества пар перестроит сетку и сбросит все счета. Имена останутся. Продолжить?")) return;
+                edit((c) => resizeCategory(c, n));
+              }}
+            >
+              {Array.from({ length: MAX_TEAMS - MIN_TEAMS + 1 }, (_, k) => MIN_TEAMS + k).map((n) => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
           </label>
-          <label className="tb-chip">
-            Нижняя сетка
-            <input value={cat.loInfo} onChange={(e) => edit((c) => { c.loInfo = e.target.value; })} />
-          </label>
+          <span className="tb-chip">
+            Верхняя сетка <b>{pairs(cat.size)} · {matches(matchCount(cat, "up"))}</b>
+          </span>
+          <span className="tb-chip">
+            Нижняя сетка <b>{pairs(loserCount(cat))} · {matches(matchCount(cat, "lo"))}</b>
+          </span>
         </div>
       ) : null}
 
       {editable && bulkOpen ? <BulkPanel cat={cat} edit={edit} onClose={() => setBulkOpen(false)} /> : null}
 
       <Bracket cat={cat} br="up" editable={editable} edit={edit} />
-      <Bracket cat={cat} br="lo" editable={editable} edit={edit} />
+      {matchCount(cat, "lo") > 0 ? <Bracket cat={cat} br="lo" editable={editable} edit={edit} /> : null}
       <Results cat={cat} />
     </div>
   );
@@ -302,16 +334,15 @@ function BulkPanel({ cat, edit, onClose }) {
     if (playedCount(cat) > 0 && !confirm("В категории уже есть счета. Расстановка пар сбросит все результаты. Продолжить?")) return;
     if (random) list = shuffle(list);
     edit((c) => {
-      c.teams = Array.from({ length: TEAM_COUNT }, (_, i) => list[i] || { a: "", b: "" });
-      c.up = newRounds("up");
-      c.lo = newRounds("lo");
+      c.teams = Array.from({ length: MAX_TEAMS }, (_, i) => list[i] || { a: "", b: "" });
+      resizeCategory(c, clampSize(list.length));
     });
     onClose();
   }
 
   return (
     <div className="tb-panel tb-bulk">
-      <p>Одна пара в строке, игроки через «/». До 16 строк.</p>
+      <p>Одна пара в строке, игроки через «/». От {MIN_TEAMS} до {MAX_TEAMS} строк — сколько строк, столько пар будет в сетке.</p>
       <textarea
         autoFocus
         rows={8}
@@ -346,8 +377,10 @@ function Bracket({ cat, br, editable, edit }) {
         <h3>{br === "up" ? "Верхняя сетка" : "Нижняя сетка"}</h3>
         <p>
           {br === "up"
-            ? "16 пар. Победитель матча проходит дальше, проигравший в 1/8 попадает в нижнюю сетку."
-            : "8 пар, проигравших в 1/8. Играют на выбывание так же, как в верхней сетке."}
+            ? `${pairs(cat.size)}. Победитель матча проходит дальше, проигравший в ${firstRoundShort(cat)} попадает в нижнюю сетку.${
+                cat.size < bracketSize(cat.size) ? " Пары без соперника проходят первый круг автоматически." : ""
+              }`
+            : `${pairs(loserCount(cat))}, проигравших в ${firstRoundShort(cat)}. Играют на выбывание так же, как в верхней сетке.`}
         </p>
         <div className="tb-nav">
           <button type="button" aria-label="Назад" onClick={() => scroll(-1)}>‹</button>
@@ -357,10 +390,10 @@ function Bracket({ cat, br, editable, edit }) {
 
       <div ref={scroller} className="tb-scroller">
         <div className="tb-grid">
-          {COUNTS[br].map((n, r) => (
+          {counts(cat)[br].map((n, r) => (
             <div key={r} className="tb-round">
               <div className="tb-round__head">
-                <span className="tb-round__title">{ROUND_TITLES[br][r]}</span>
+                <span className="tb-round__title">{roundTitle(br, n)}</span>
                 {editable ? (
                   <label className="tb-chip tb-chip--sm">
                     Время
@@ -417,10 +450,23 @@ function MatchCard({ cat, br, r, i, editable, edit }) {
   const match = cat[br][r][i];
   const p = participants(cat, br, r, i);
   const w = winner(cat, br, r, i);
-  const ready = p[0] !== null && p[1] !== null;
+  const bye = isBye(p);
+  const ready = !bye && p[0] !== null && p[1] !== null;
   const errors = ready ? matchResult(match).errors : [];
   const badSets = new Set(errors.map((e) => e.si));
   const editMatch = (fn) => edit((c) => fn(c[br][r][i]));
+
+  if (p[0] === BYE && p[1] === BYE) {
+    return (
+      <div className="tb-match tb-match--pending">
+        <div className="tb-row">
+          <span className="tb-row__names">
+            <em>Матча нет</em>
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -433,7 +479,7 @@ function MatchCard({ cat, br, r, i, editable, edit }) {
     >
       <span className="tb-match__num">#{i + 1}</span>
 
-      {editable || match.court ? (
+      {!bye && (editable || match.court) ? (
         <div className="tb-match__meta">
           <label className="tb-chip tb-chip--xs">
             Корт
@@ -465,6 +511,7 @@ function MatchCard({ cat, br, r, i, editable, edit }) {
           match={match}
           w={w}
           ready={ready}
+          bye={bye}
           badSets={badSets}
           editable={editable}
           edit={edit}
@@ -485,18 +532,33 @@ function MatchCard({ cat, br, r, i, editable, edit }) {
   );
 }
 
-function TeamRow({ cat, br, r, i, k, t, match, w, ready, badSets, editable, edit, editMatch }) {
+function TeamRow({ cat, br, r, i, k, t, match, w, ready, bye, badSets, editable, edit, editMatch }) {
+  if (t === BYE) {
+    return (
+      <div className="tb-row">
+        <span className="tb-ava tb-ava--unknown">—</span>
+        <span className="tb-row__names">
+          <em>Без соперника — проход дальше</em>
+        </span>
+      </div>
+    );
+  }
+
   if (t === null) {
     return (
       <div className="tb-row">
         <span className="tb-ava tb-ava--unknown">?</span>
         <span className="tb-row__names">
-          <em>{sourceLabel(br, r, i, k)}</em>
+          <em>{sourceLabel(cat, br, r, i, k)}</em>
         </span>
-        <span className="tb-row__scores">
-          {match.s.map((_, si) => <span key={si} className="tb-score tb-score--ph" />)}
-        </span>
-        <span className="tb-pick-ph" />
+        {bye ? null : (
+          <>
+            <span className="tb-row__scores">
+              {match.s.map((_, si) => <span key={si} className="tb-score tb-score--ph" />)}
+            </span>
+            <span className="tb-pick-ph" />
+          </>
+        )}
       </div>
     );
   }
@@ -526,7 +588,7 @@ function TeamRow({ cat, br, r, i, k, t, match, w, ready, badSets, editable, edit
         {noShow ? <em className="tb-row__wo">неявка</em> : null}
       </span>
 
-      <span className="tb-row__scores">
+      <span className="tb-row__scores" style={bye ? { display: "none" } : undefined}>
         {match.s.map((set, si) =>
           editable ? (
             <input
@@ -603,7 +665,10 @@ function Results({ cat }) {
     <section className="tb-panel tb-results">
       <div className="tb-panel__head">
         <h3>Таблица результатов</h3>
-        <p>Места 1–8 разыгрываются в верхней сетке, 9–16 — в нижней. Обновляется по мере ввода счёта.</p>
+        <p>
+          Места 1–{bracketSize(cat.size) / 2} разыгрываются в верхней сетке
+          {loserCount(cat) > 0 ? `, ${bracketSize(cat.size) / 2 + 1}–${cat.size} — в нижней` : ""}. Обновляется по мере ввода счёта.
+        </p>
       </div>
       <div className="tb-table-wrap">
         <table className="tb-table">

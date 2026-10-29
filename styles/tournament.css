@@ -1251,8 +1251,15 @@ input.tb-score:disabled {
   margin: -8px 0 24px;
 }
 
-.tb-board__infos input {
-  min-width: 12em;
+.tb-chip select {
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-dark);
+  cursor: pointer;
 }
 
 .tb-editor-card {
