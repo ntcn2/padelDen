@@ -64,7 +64,7 @@ export default function Partners() {
             <div>
               <p className="partners__cta-title">Хотите стать нашим партнёром?</p>
               <p className="partners__cta-text">
-                Напишите Денису в Telegram — обсудим, как можем быть полезны друг другу.
+                Напишите нам в Telegram — обсудим, как можем быть полезны друг другу.
               </p>
             </div>
           </div>
@@ -77,7 +77,7 @@ export default function Partners() {
             <span className="icon-circle icon-circle--filled partners__cta-button-icon">
               <ArrowRight />
             </span>
-            Написать Денису
+            Написать в Telegram
           </a>
         </Reveal>
       </div>
