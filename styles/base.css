@@ -18,6 +18,8 @@ body {
 
 body {
   min-height: 100%;
+  /* 100vw у полосок во всю ширину включает полосу прокрутки — не даём уехать вбок */
+  overflow-x: clip;
   background: var(--color-bg);
   color: var(--color-dark);
   font-family: var(--font-sans);

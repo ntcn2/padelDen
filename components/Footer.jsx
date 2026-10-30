@@ -89,11 +89,6 @@ export default function Footer() {
 
         <div className="footer__legal">
           <span>© 2026 Top Padel Alicante</span>
-          <span className="footer__legal-links">
-            <a href="#">Политика конфиденциальности</a>
-            <span className="footer__legal-dot" aria-hidden="true" />
-            <a href="#">Cookies</a>
-          </span>
         </div>
 
         <div className="footer__watermark-wrap">

@@ -119,19 +119,6 @@
   color: var(--color-gray-text);
 }
 
-.footer__legal-links {
-  display: inline-flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.footer__legal-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--color-green);
-}
-
 .footer__watermark-wrap {
   overflow: hidden;
   height: clamp(50px, 8vw, 100px);
@@ -148,6 +135,8 @@
 
 /* Полоска «сайт разработан» — тёмная, потому что логотип белый */
 .footer__credit {
+  /* подвал лежит в контейнере .page — растягиваем полоску на всю ширину окна */
+  margin-inline: calc(50% - 50vw);
   background: var(--color-dark);
   color: #fff;
 }
