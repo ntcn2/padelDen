@@ -100,6 +100,15 @@ export default function Footer() {
           <span className="footer__watermark">TOP PADEL ALICANTE</span>
         </div>
       </div>
+
+      <div className="footer__credit">
+        <a href="https://umapalata.space/" target="_blank" rel="noopener noreferrer">
+          <span>
+            Сайт разработан с любовью <span className="footer__credit-heart" aria-hidden="true">♥</span>
+          </span>
+          <Image className="footer__credit-logo" src="/images/umapalata.svg" alt="Umapalata" width={927} height={747} unoptimized />
+        </a>
+      </div>
     </footer>
   );
 }

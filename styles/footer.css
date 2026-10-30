@@ -145,3 +145,34 @@
   color: #eeeeea;
   white-space: nowrap;
 }
+
+/* Полоска «сайт разработан» — тёмная, потому что логотип белый */
+.footer__credit {
+  background: var(--color-dark);
+  color: #fff;
+}
+
+.footer__credit a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px var(--page-margin);
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  transition: color 0.2s;
+}
+
+.footer__credit a:hover {
+  color: #fff;
+}
+
+.footer__credit-heart {
+  color: var(--color-green);
+}
+
+.footer__credit-logo {
+  width: auto;
+  height: 40px;
+}
